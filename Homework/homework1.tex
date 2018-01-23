@@ -1,0 +1,311 @@
+\documentclass[onecolumn,10pt]{jhwhw}
+
+\usepackage{algpseudocode}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{color}
+\usepackage{commath}
+\usepackage{epsfig}
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{pdfpages}
+\usepackage{pgfplots}
+\usepackage{siunitx}
+\usepackage{wrapfig}
+
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+\author{John Karasinski}
+\title{Homework \# 1}
+
+\begin{document}
+%\maketitle
+
+\problem{}
+Measured data in millimeters for the position coordinates of three points of a moving body are known. Find the (4x4) homogeneous transformation matrix for this displacement.
+
+\[
+\bm{r_1} =
+\begin{bmatrix*}[c]
+50 \\
+0 \\
+0 \\
+1 
+\end{bmatrix*}
+,
+\bm{r_2} =
+\begin{bmatrix*}[c]
+0 \\
+0 \\
+0 \\
+1 
+\end{bmatrix*}
+,
+\bm{r_3} =
+\begin{bmatrix*}[c]
+0 \\
+125 \\
+0 \\
+1 
+\end{bmatrix*}
+,
+\]\\
+\[
+\bm{R_1} (t_1) =
+\begin{bmatrix*}[c]
+37.325 \\
+-98.175 \\
+132.045 \\
+1 
+\end{bmatrix*}
+,
+\bm{R_2} (t_1) =
+\begin{bmatrix*}[c]
+71.800 \\
+-118.925 \\
+161.725 \\
+1 
+\end{bmatrix*}
+,
+\bm{R_3} (t_1) =
+\begin{bmatrix*}[c]
+152.450 \\
+-28.425 \\
+131.225 \\
+1 
+\end{bmatrix*}
+\]
+Using Equation 3.29,
+\[
+\bm{r_4} = \bm{r_1} + \left [ \bm{r_2} - \bm{r_1} \right ] \times \left [ \bm{r_3}-\bm{r_1} \right ],
+\]
+and it's successor,
+\[
+\bm{R_4}(t_1) = \bm{R_1}(t_1) + \left [ \bm{R_2}(t_1) - \bm{R_1}(t_1) \right ] \times \left [ \bm{R_3} (t_1) - \bm{R_1}(t_1) \right ],
+\]
+we calculate data for two positions of an independent fourth point.
+
+\begin{align*}
+\bm{r_4} &= 
+\begin{bmatrix*}[c]
+50 \\
+0 \\
+0 \\
+1 
+\end{bmatrix*}
++
+\left (
+\begin{bmatrix*}[c]
+0 \\
+0 \\
+0 \\
+1 
+\end{bmatrix*}
+-
+\begin{bmatrix*}[c]
+50 \\
+0 \\
+0 \\
+1 
+\end{bmatrix*}
+\right )
+\times
+\left (
+\begin{bmatrix*}[c]
+0 \\
+125 \\
+0 \\
+1 
+\end{bmatrix*}
+-
+\begin{bmatrix*}[c]
+50 \\
+0 \\
+0 \\
+1 
+\end{bmatrix*}
+\right ) \\
+&=
+\begin{bmatrix*}[c]
+50 \\
+0 \\
+0 \\
+1 
+\end{bmatrix*}
++
+\begin{bmatrix*}[c]
+-50 \\
+0 \\
+0 \\
+0 
+\end{bmatrix*}
+\times
+\begin{bmatrix*}[c]
+-50 \\
+125 \\
+0 \\
+0 
+\end{bmatrix*}\\
+&=
+\begin{bmatrix*}[c]
+50 \\
+0 \\
+0 \\
+1 
+\end{bmatrix*}
++
+\begin{bmatrix*}[c]
+0 \\
+0 \\
+-6250 \\
+0
+\end{bmatrix*}
+\\
+&=
+\begin{bmatrix*}[c]
+50 \\
+0 \\
+6250 \\
+1
+\end{bmatrix*}
+\end{align*}
+
+\begin{align*}
+\bm{R_4}(t_1) &= \bm{R_1}(t_1) + \left [ \bm{R_2}(t_1) - \bm{R_1}(t_1) \right ] \times \left [ \bm{R_3} (t_1) - \bm{R_1}(t_1) \right ] \\
+&=
+\begin{bmatrix*}[c]
+37.325 \\
+-98.175 \\
+132.045 \\
+1 
+\end{bmatrix*}
++
+\left (
+\begin{bmatrix*}[c]
+71.800 \\
+-118.925 \\
+161.725 \\
+1 
+\end{bmatrix*}
+-
+\begin{bmatrix*}[c]
+37.325 \\
+-98.175 \\
+132.045 \\
+1 
+\end{bmatrix*}
+\right )
+\times
+\left (
+\begin{bmatrix*}[c]
+152.450 \\
+-28.425 \\
+131.225 \\
+1 
+\end{bmatrix*}
+-
+\begin{bmatrix*}[c]
+37.325 \\
+-98.175 \\
+132.045 \\
+1 
+\end{bmatrix*}
+\right ) \\
+&=
+\begin{bmatrix*}[c]
+37.325 \\
+-98.175 \\
+132.045 \\
+1 
+\end{bmatrix*}
++
+\begin{bmatrix*}[c]
+34.475 \\
+-20.75 \\
+29.68 \\
+0
+\end{bmatrix*}
+\times
+\begin{bmatrix*}[c]
+115.125 \\
+69.75 \\
+-0.82 \\
+0
+\end{bmatrix*} \\
+&=
+\begin{bmatrix*}[c]
+37.325 \\
+-98.175 \\
+132.045 \\
+1 
+\end{bmatrix*}
++
+\begin{bmatrix*}[c]
+-2053.165 \\
+3445.1795 \\
+4793.475 \\
+0
+\end{bmatrix*} \\
+&=
+\begin{bmatrix*}[c]
+-2015.84 \\
+3347.0045 \\
+4925.52 \\
+1 
+\end{bmatrix*}
+\end{align*} 
+We now use Equation 3.32, to find the $T$ matrix,
+\begin{align*}
+T &= \left [ \bm{R_1}(t_1) | \bm{R_2}(t_1) | \bm{R_3}(t_1) | \bm{R_4}(t_1) \right ] \left [ \bm{r_1} | \bm{r_2} | \bm{r_3} | \bm{r_4} \right ]^{-1} \\
+&=
+\begin{bmatrix*}[c]
+37.325  & 71.800   & 152.450 & -2015.84  \\
+-98.175 & -118.925 & -28.425 & 3347.0045 \\
+132.045 & 161.725  & 131.225 & 4925.52   \\
+1       & 1        & 1       & 1         \\
+\end{bmatrix*}
+\begin{bmatrix*}[c]
+50 & 0 & 0   & 50   \\
+0  & 0 & 125 & 0    \\
+0  & 0 & 0   & 6250 \\
+1  & 1 & 1   & 1    \\
+\end{bmatrix*}^{-1} \\
+&=
+\dfrac{1}{6250}
+\begin{bmatrix*}[c]
+37.325  & 71.800   & 152.450 & -2015.84  \\
+-98.175 & -118.925 & -28.425 & 3347.0045 \\
+132.045 & 161.725  & 131.225 & 4925.52   \\
+1       & 1        & 1       & 1         \\
+\end{bmatrix*}
+\begin{bmatrix*}[c]
+125  & 0   & -1 & 0    \\
+-125 & -50 & 0  & 6250 \\
+0    & 50  & 0  & 0    \\
+0    & 0   & 1  & 0    \\
+\end{bmatrix*} \\
+&=
+\begin{bmatrix*}[c]
+-0.6895    &    0.6452    &   -0.3285064 &   71.8   \\
+ 0.415     &    0.724     &    0.55122872& -118.925 \\
+-0.5936    &   -0.244     &    0.766956  &  161.725 \\
+ 0         &    0         &    0         &    1     \\
+\end{bmatrix*}
+\end{align*}
+
+\clearpage
+
+\problem{}
+Consider a robot end-effector with two coordinate systems attached to it as illustrated in Figure P2.17a. One coordinate system is attached to the end-effector with its origin at the wrist center point and the other is attached to the tip of the end-effector. The kinematic structure of the wrist is a spherical linkage and is illustrated in Figure P2.17b.
+
+Show that if we use the coordinate system attached to the end effector at the wrist center point, the order in which we perform the roll,p itch, and yaw rotations is irrelevant; however, if we use the coordinate system attached to the end effector at its tip then the order does not make a difference unless we are only concerned with differential or instantaneous rotations.
+
+\end{document}
