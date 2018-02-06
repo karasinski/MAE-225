@@ -58,18 +58,7 @@ In an industrial application a part is to turn 20 degrees about a rod shown belo
 \end{enumerate}
 
 Given
-% \begin{align*}
-% R_2 = \left ( R_1 - P \right ) \cos \theta + \left [ \left( R_1 - P \right ) \cdot w \right ] w \left ( 1 - \cos \theta \right ) + w \times \left( R_1 - P \right ) \sin \theta + P + \phi w
-% \end{align*}
-% \begin{align*}
-% R_2 = \left [ I + \widetilde{w} \sin \theta + \widetilde{w}^2 \left( 1 - \cos \theta \right ) \right ] \left( R_1 - P \right ) + P + \phi w
-% \end{align*}
-
-% and 
-
 \begin{align*}
-% \theta &= 0 \\
-% \phi &= \ang{20}
 P = 
 \begin{bmatrix*}[c]
 0 \\
@@ -90,61 +79,38 @@ w = \dfrac{P - O}{\norm{P - O}} &=
 \end{bmatrix*}
 \end{align*}
 
-% this reduces to 
-
-% \begin{align*}
-% R_2 = I \left( R_1 - P \right ) + P + \phi w
-% \end{align*}
-
 \begin{align*}
+\du{\Theta} &= \du{I} + \du{\widetilde{w}} \sin \phi + \du{\widetilde{w}}^2 \left ( 1 - \cos\phi \right ) \\
+&= 
+\begin{bmatrix*}[c]
+(w_x^2-1)(1 -\cos \theta) + 1 & w_xw_y(1 -\cos \theta) - w_z\sin \theta &  w_xw_z(1 -\cos \theta) + w_y\sin \theta \\
+w_xw_y(1 -\cos \theta) + w_z\sin \theta &  (w_y^2-1)(1 -\cos \theta) + 1 & -w_x\sin \theta + w_yw_z(1 -\cos \theta) \\
+w_xw_z(1 -\cos \theta) - w_y\sin \theta & w_x\sin \theta + w_yw_z(1 -\cos \theta) &   (w_z^2-1)(1 -\cos \theta) + 1 \\
+\end{bmatrix*} \\
+&=
+\begin{bmatrix*}[c]
+0.9396 & -0.2052 & -0.2736 \\
+0.2052 &  0.9782 & -0.0289 \\
+0.2736 & -0.0289 &  0.9614 \\
+\end{bmatrix*} \\
+d &= \left(\du{I} - \du{\Theta} \right ) \underline{P} + \phi \underline{w} \\
+&=
+\begin{bmatrix*}[c]
+\phi w_x   -P_x (w_x^2-1) (1-\cos \theta) + P_y (-w_x w_y (1-\cos \theta) + w_z \sin \theta) + Pz (-w_x w_z (1-\cos \theta) - w_y \sin \theta)\\
+\phi w_y +  P_x (-w_x w_y (1-\cos \theta) - w_z \sin \theta) - P_y (w_y^2 - 1) (1-\cos \theta) + Pz (w_x \sin \theta - w_y w_z (1-\cos \theta))\\
+\phi w_z +  P_x (-w_x w_z (1-\cos \theta) + w_y \sin \theta) + P_y (-w_x \sin \theta - w_y w_z (1-\cos \theta)) - Pz (w_z^2 - 1) (1-\cos \theta)\\
+\end{bmatrix*} \\
+&=
+\begin{bmatrix*}[c]
+ 1.6416 \\
+-4.6263 \\
+ 3.8315 \\
+\end{bmatrix*} \\
 T &=
 \begin{bmatrix*}[c]
-\Theta \left(1, 1 \right ) & \Theta \left(1, 2 \right ) & \Theta \left(1, 3 \right ) & d_x \\
-\Theta \left(2, 1 \right ) & \Theta \left(2, 2 \right ) & \Theta \left(2, 3 \right ) & d_y \\
-\Theta \left(3, 1 \right ) & \Theta \left(3, 2 \right ) & \Theta \left(3, 3 \right ) & d_z \\
-0 & 0 & 0 & 1
-\end{bmatrix*}
-\end{align*}
-
-And knowing $\theta = 0,$
-\begin{align*}
-\Theta \left(1, 1 \right ) &= [\left ( w_x \right )^2 - 1 ] \left ( 1 - \cos \theta \right ) + 1 = 0.939693\\
-\Theta \left(1, 2 \right ) &= w_y w_x \left ( 1 - \cos \theta \right ) - w_z \sin \theta = 0.205212\\
-\Theta \left(1, 3 \right ) &= w_z w_x \left ( 1 - \cos \theta \right ) + w_y \sin \theta = 0.273616\\
-\Theta \left(2, 1 \right ) &= w_x w_y \left ( 1 - \cos \theta \right ) + w_z \sin \theta = 0.205212\\
-\Theta \left(2, 2 \right ) &= [\left ( w_y \right )^2 - 1 ] \left ( 1 - \cos \theta \right ) + 1 = 0.978289\\
-\Theta \left(2, 3 \right ) &= w_z w_y \left ( 1 - \cos \theta \right ) - w_x \sin \theta = 0.028947\\
-\Theta \left(3, 1 \right ) &= w_x w_z \left ( 1 - \cos \theta \right ) - w_y \sin \theta = 0.273616\\
-\Theta \left(3, 2 \right ) &= w_y w_z \left ( 1 - \cos \theta \right ) + w_x \sin \theta = 0.028947\\
-\Theta \left(3, 3 \right ) &= [\left ( w_z \right )^2 - 1 ] \left ( 1 - \cos \theta \right ) + 1 = 0.961403\\
-\end{align*}
-
-% \begin{align*}
-% \Theta \left(1, 1 \right ) &= \cos \ang{20} \\
-% \Theta \left(1, 2 \right ) &= -.6 \sin \ang{20} \\
-% \Theta \left(1, 3 \right ) &= -.8 \sin \ang{20} \\
-% \Theta \left(2, 1 \right ) &= .6 \sin \ang{20} \\
-% \Theta \left(2, 2 \right ) &= .36 \cos \ang{20} + .64 \\
-% \Theta \left(2, 3 \right ) &= -.48 + .48 \cos \ang{20} \\
-% \Theta \left(3, 1 \right ) &= .8 \sin \ang{20} \\
-% \Theta \left(3, 2 \right ) &= -.48 + .48 \cos \ang{20} \\
-% \Theta \left(3, 3 \right ) &= -0.64 \cos \ang{20} + .36 \\
-% \end{align*}
-
-and
-
-\begin{align*}
-d_x &= \phi w_x - [\Theta \left (1, 1 \right) - 1] P_x - \Theta \left ( 1, 2 \right ) P_y - \Theta \left ( 1, 3 \right ) P_z = -0.164169 \\
-d_y &= \phi w_y - \Theta \left (2, 1 \right) P_x - [\Theta \left ( 2, 2 \right ) - 1] P_y - \Theta \left ( 2, 3 \right ) P_z = -4.817368 \\
-d_z &= \phi w_z - \Theta \left (3, 1 \right) P_x - \Theta \left ( 3, 2 \right ) P_y - [\Theta \left ( 3, 3 \right ) - 1] P_z =  3.623158 \\
-\end{align*}
-
-\begin{align*}
-T &=
-\begin{bmatrix*}[c]
-0.939693 & 0.205212 & 0.273616 & -0.164169 \\
-0.205212 & 0.978289 & 0.028947 & -4.817368 \\
-0.273616 & 0.028947 & 0.961403 &  3.623158 \\
+0.9396 & -0.2052 & -0.2736 &  1.6416 \\
+0.2052 &  0.9782 & -0.0289 & -4.6263 \\
+0.2736 & -0.0289 &  0.9614 &  3.8315 \\
 0 & 0 & 0 & 1
 \end{bmatrix*}
 \end{align*}
@@ -159,12 +125,13 @@ Z \\
 \end{bmatrix*}
 =
 \begin{bmatrix*}[c]
-0.939693 X + 0.205212 Y + 0.273616 Z - 0.164169 \\
-0.205212 X + 0.978289 Y + 0.028947 Z - 4.817368 \\
-0.273616 X + 0.028947 Y + 0.961403 Z + 3.623158 \\
-                                              1 \\
+0.9396 X -  0.2052 Y -  0.2736 Z +  1.6416 \\
+0.2052 X +  0.9782 Y -  0.0289 Z -  4.6263 \\
+0.2736 X -  0.0289 Y +  0.9614 Z +  3.8315 \\
+                                         1 \\
 \end{bmatrix*}
 \end{align*}
+
 
 \problem{}
 Complete the derivation of the Denavit-Hartenberg (D-H) Transformation from what was done in the classroom using the joint and Shape matrices based on the diagram and the derivation started in the class on 2-1-2018.
