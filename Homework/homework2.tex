@@ -1,0 +1,178 @@
+\documentclass[onecolumn,10pt]{jhwhw}
+
+\usepackage{algpseudocode}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{color}
+\usepackage{commath}
+\usepackage{empheq}
+\usepackage{epsfig}
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{pdfpages}
+\usepackage{pgfplots}
+\usepackage{siunitx}
+\usepackage{wrapfig}
+ 
+% Command "alignedbox{}{}" for a box within an align environment
+% Source: http://www.latex-community.org/forum/viewtopic.php?f=46&t=8144
+\newlength\dlf  % Define a new measure, dlf
+\newcommand\alignedbox[2]{
+% Argument #1 = before & if there were no box (lhs)
+% Argument #2 = after & if there were no box (rhs)
+&  % Alignment sign of the line
+{
+\settowidth\dlf{$\displaystyle #1$}  
+    % The width of \dlf is the width of the lhs, with a displaystyle font
+\addtolength\dlf{\fboxsep+\fboxrule}  
+    % Add to it the distance to the box, and the width of the line of the box
+\hspace{-\dlf}  
+    % Move everything dlf units to the left, so that & #1 #2 is aligned under #1 & #2
+\boxed{#1 #2}
+    % Put a box around lhs and rhs
+}
+}
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+\def\du#1{\underline{\underline{#1}}}
+
+\author{John Karasinski}
+\title{Homework \# 1}
+
+\begin{document}
+%\maketitle
+
+\problem{}
+Consider the robot manipulator shown below.
+\begin{enumerate}
+    \item Determine the D-H parameters for the robot and the D-H transformation for each joint.
+    \item Derive the kinematic equations for the coordinates of a point at the tip of the last link (XYZ) in terms of the joint variables.
+    \item Determine the inverse kinematic solution.
+\end{enumerate}
+
+\begin{center}
+\begin{tabular}{r|rrr}
+& 1 & 2 & 3 \\
+\midrule
+$a_i$ &      0 & 0 & $r$ \\
+$\alpha_i$ & 0 & $180^o$ & 0 \\    
+$\theta_i$ & $\theta$ & 0 & $180^o$ \\ 
+$s_i$ &      0 & $h$ & 0 \\
+\end{tabular}
+\end{center}
+
+\begin{align*}
+\du{T}_{12} &=
+\begin{bmatrix*}[c]
+\cos \theta & - \sin \theta & 0 & 0 \\
+\sin \theta &   \cos \theta & 0 & 0 \\
+0 & 0 & 1 & 0\\
+0 & 0 & 0 & 1\\
+\end{bmatrix*},
+\du{T}_{23} =
+\begin{bmatrix*}[c]
+1 & 0 & 0 & 0\\
+0 & 1 & 0 & 0\\
+0 & 0 & -1 & h\\
+0 & 0 & 0 & 1\\
+\end{bmatrix*},
+\du{T}_{34} =
+\begin{bmatrix*}[c]
+-1 & 0 & 0 & r\\
+0 & 1 & 0 & 0\\
+0 & 0 & 1 & 0\\
+0 & 0 & 0 & 1\\
+\end{bmatrix*}
+\end{align*}
+\begin{align*}
+\underline{x}_1 &= \du{T}_{12} \du{T}_{23} \du{T}_{34} \underline{x}_4 \\
+\begin{bmatrix*}[c]
+x_1 \\
+y_1 \\
+z_1 \\
+1 \\
+\end{bmatrix*}
+& =
+\begin{bmatrix*}[c]
+-\cos \theta & -\sin \theta & 0 & r \cos \theta \\
+-\sin \theta &  \cos \theta & 0 & r \sin \theta \\
+         0 &           0 & 1 &            -h \\
+         0 &           0 & 0 &            1 \\
+\end{bmatrix*}
+\begin{bmatrix*}[c]
+X \\
+Y \\
+Z \\
+1 \\
+\end{bmatrix*}\\
+\begin{bmatrix*}[c]
+0 \\
+0 \\
+0 \\
+1 \\
+\end{bmatrix*} &=
+\begin{bmatrix*}[c]
+-X \cos \theta - Y \sin \theta + r \cos \theta \\
+-X \sin \theta + Y \cos \theta + r \sin \theta \\
+                                     Z - h \\
+                                         1 \\
+\end{bmatrix*}
+\end{align*}
+Which gives us three equations. The third row is immediately solvable,
+\begin{align*}
+\alignedbox{Z}{= h}
+\end{align*}
+Setting rows one and two to zero, and then squaring yields
+\begin{align*}
+\left (-X + r \right)^2 \cos^2 \theta &= Y^2 \sin^2 \theta \\
+\left (-X + r \right)^2 \sin^2 \theta &= Y^2 \cos^2 \theta \\
+\end{align*}
+Adding these and taking advantage of trignometric identities
+\begin{align*}
+\left (-X + r \right)^2 \left (\cos^2 \theta+ \sin^2 \theta \right)  &= Y^2 \left (\cos^2 \theta+ \sin^2 \theta \right) \\
+Y &= -X + r \\
+\end{align*}
+Substituting this back in row 2 yields
+\begin{align*}
+% 0 &= X \cos \theta - \left (X + r \right) \sin \theta + r \cos \theta \\
+0 &= -X \sin \theta + \left (-X + r \right) \cos \theta + r \sin \theta \\
+0 &= -X \left( \sin \theta + \cos \theta \right) + r \left (\cos \theta + \sin \theta \right) \\
+\alignedbox{X}{= r}
+\end{align*}
+Finally, plugging this result into row 1 yields
+\begin{align*}
+0 &= -r \cos \theta - Y \sin \theta + r \cos \theta \\
+Y &= \dfrac{1}{\sin \theta} \\
+\alignedbox{Y}{= \dfrac{2 \tan \frac{\theta}{2}}{1 + \tan^2 \frac{\theta}{2}}}
+\end{align*}
+
+% \underline{x}_4 &= \du{T}_{14}^{-1} \underline{x}_1 \\
+% \begin{bmatrix*}[c]
+% X \\
+% Y \\
+% Z \\
+% 1 \\
+% \end{bmatrix*} &=
+% \begin{bmatrix*}[c]
+% \cos \theta & \sin\theta & 0 & -r \\
+% -\sin\theta & \cos\theta & 0 &  0 \\
+%           0 &          0 & 1 & -h \\
+%           0 &          0 & 0 &  1 \\
+% \end{bmatrix*}
+% \begin{bmatrix*}[c]
+% x_1 \\
+% y_1 \\
+% z_1 \\
+% 1 \\
+% \end{bmatrix*}
+% \end{align*}
+
+\end{document}
