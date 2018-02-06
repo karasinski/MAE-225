@@ -53,7 +53,7 @@
 \problem{}
 In an industrial application a part is to turn 20 degrees about a rod shown below (in the direction indicated) and move down six inches along the same rod.
 \begin{enumerate}
-    \item Please determine a signle 4x4 matrix transformation that can be used to compute the new coordinates of an arbitrary point on the part.
+    \item Please determine a single 4x4 matrix transformation that can be used to compute the new coordinates of an arbitrary point on the part.
     \item Using the results of part a, please determine the new world coordinates of a point whose original coordinates were X, Y, Z.
 \end{enumerate}
 
@@ -116,7 +116,7 @@ And knowing $\theta = 0,$
 \Theta \left(2, 3 \right ) &= w_z w_y \left ( 1 - \cos \theta \right ) - w_x \sin \theta = 0.028947\\
 \Theta \left(3, 1 \right ) &= w_x w_z \left ( 1 - \cos \theta \right ) - w_y \sin \theta = 0.273616\\
 \Theta \left(3, 2 \right ) &= w_y w_z \left ( 1 - \cos \theta \right ) + w_x \sin \theta = 0.028947\\
-\Theta \left(3, 3 \right ) &= [\left ( w_z \right )^2 - 1 ] \left ( 1 - \cos \theta \right ) + 1 = 0.299860\\
+\Theta \left(3, 3 \right ) &= [\left ( w_z \right )^2 - 1 ] \left ( 1 - \cos \theta \right ) + 1 = 0.961403\\
 \end{align*}
 
 % \begin{align*}
@@ -136,7 +136,7 @@ and
 \begin{align*}
 d_x &= \phi w_x - [\Theta \left (1, 1 \right) - 1] P_x - \Theta \left ( 1, 2 \right ) P_y - \Theta \left ( 1, 3 \right ) P_z = -0.164169 \\
 d_y &= \phi w_y - \Theta \left (2, 1 \right) P_x - [\Theta \left ( 2, 2 \right ) - 1] P_y - \Theta \left ( 2, 3 \right ) P_z = -4.817368 \\
-d_z &= \phi w_z - \Theta \left (3, 1 \right) P_x - \Theta \left ( 3, 2 \right ) P_y - [\Theta \left ( 3, 3 \right ) - 1] P_z =  4.020084 \\
+d_z &= \phi w_z - \Theta \left (3, 1 \right) P_x - \Theta \left ( 3, 2 \right ) P_y - [\Theta \left ( 3, 3 \right ) - 1] P_z =  3.623158 \\
 \end{align*}
 
 \begin{align*}
@@ -144,7 +144,7 @@ T &=
 \begin{bmatrix*}[c]
 0.939693 & 0.205212 & 0.273616 & -0.164169 \\
 0.205212 & 0.978289 & 0.028947 & -4.817368 \\
-0.273616 & 0.028947 & 0.299860 &  4.020084 \\
+0.273616 & 0.028947 & 0.961403 &  3.623158 \\
 0 & 0 & 0 & 1
 \end{bmatrix*}
 \end{align*}
@@ -161,15 +161,98 @@ Z \\
 \begin{bmatrix*}[c]
 0.939693 X + 0.205212 Y + 0.273616 Z - 0.164169 \\
 0.205212 X + 0.978289 Y + 0.028947 Z - 4.817368 \\
-0.273616 X + 0.028947 Y + 0.299860 Z + 4.020084 \\
+0.273616 X + 0.028947 Y + 0.961403 Z + 3.623158 \\
                                               1 \\
 \end{bmatrix*}
 \end{align*}
 
-
-
 \problem{}
-Complete the derivation of hte Denavit-Hartenberg (D-H) Transformation from what was done in the classrom using the joint and Shape matrices based on the diagram and the derivation started in the class on 2-1-2018.
+Complete the derivation of the Denavit-Hartenberg (D-H) Transformation from what was done in the classroom using the joint and Shape matrices based on the diagram and the derivation started in the class on 2-1-2018.
+
+\begin{align*}
+\du{T}_{h-, h+} &= \du{I} \Phi_{h} \du{S}^{-1}_{h+1, h} \\
+\Phi_{h} &=
+\begin{bmatrix*}[c]
+\cos \phi_h^1 & -\sin \phi_h^1 & 0 & 0 \\
+\sin \phi_h^1 &  \cos \phi_h^1 & 0 & 0 \\
+0 & 0 & 1 & \phi_h^2 \\
+0 & 0 & 0 & 1
+\end{bmatrix*} \\
+\du{\Theta} &= \du{I} + \du{\widetilde{w}} \sin \phi + \du{\widetilde{w}}^2 \left ( 1 - \cos\phi \right ) \\
+\du{\widetilde{w}} &= 
+\begin{bmatrix*}[c]
+0 & -w_z & w_y \\
+w_z & 0 & -w_z \\
+-w_y & w_x & 0
+\end{bmatrix*} 
+\end{align*}
+
+To solve for $\du{S}^{-1}_{h+1, h}$, we define the transformation: \\
+\\
+Fixed coordinate system: $(u v w)_{h'}$ \\
+Moving coordinate system: $(u v w)_{h+1}$ \\
+Screw axis: $u'_h, w = (1, 0, 0)$ \\
+$\underline{P} = \underline{0}$ \\
+$s = a_h$, $u$ direction \\
+$\phi = \alpha_h$
+
+\begin{align*}
+\du{\Theta} &=
+\begin{bmatrix*}[c]
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1 \\
+\end{bmatrix*} +
+\begin{bmatrix*}[c]
+0 & 0 & 0 \\
+0 & 0 & -1 \\
+0 & 1 & 0
+\end{bmatrix*} \sin \alpha_h +
+\begin{bmatrix*}[c]
+0 & 0 & 0 \\
+0 & 0 & -1 \\
+0 & 1 & 0
+\end{bmatrix*}
+\begin{bmatrix*}[c]
+0 & 0 & 0 \\
+0 & 0 & -1 \\
+0 & 1 & 0
+\end{bmatrix*} \left ( 1 - \cos \alpha_h \right ) \\
+&=
+\begin{bmatrix*}[c]
+1 &        0 &         0 \\
+0 & \cos \alpha_h & -\sin \alpha_h \\
+0 & \sin \alpha_h &  \cos \alpha_h \\
+\end{bmatrix*} \\
+S_{h+,h}^{-1} &=
+\begin{bmatrix*}[c]
+1 &        0 &         0  & a_h \\
+0 & \cos \alpha_h & -\sin \alpha_h & 0 \\
+0 & \sin \alpha_h &  \cos \alpha_h & 0\\
+0 & 0 & 0 & 1
+\end{bmatrix*} \\
+\du{T}_{h-, h+} &= \du{I} \Phi_{h} \du{S}^{-1}_{h+1, h} \\
+&=
+\begin{bmatrix*}[c]
+\cos \phi_h^1 & -\sin \phi_h^1 & 0 & 0 \\
+\sin \phi_h^1 &  \cos \phi_h^1 & 0 & 0 \\
+0 & 0 & 1 & \phi_h^2 \\
+0 & 0 & 0 & 1
+\end{bmatrix*}
+\begin{bmatrix*}[c]
+1 &        0 &         0  & a_h \\
+0 & \cos \alpha_h & -\sin \alpha_h & 0 \\
+0 & \sin \alpha_h &  \cos \alpha_h & 0\\
+0 & 0 & 0 & 1 \\
+\end{bmatrix*} \\
+&=
+\begin{bmatrix*}[c]
+\cos \phi_h^1  &  -\sin \phi_h^1  \cos \alpha_h  &  \sin \alpha_h  \sin \phi_h^1  & a_h \cos \phi_h^1  \\
+\sin \phi_h^1  &   \cos \alpha_h  \cos \phi_h^1  & -\sin \alpha_h  \cos \phi_h^1  & a_h \sin \phi_h^1  \\
+             0 &                  \sin(\alpha_h) &                 \cos(\alpha_h) &           \phi_h^2 \\
+             0 &                               0 &                              0 &                  1 \\
+\end{bmatrix*}
+\end{align*}
 
 \problem{}
 Consider the robot manipulator shown below.
