@@ -23,6 +23,8 @@
 \DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
 \DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
 
+\def\du#1{\underline{\underline{#1}}}
+
 \author{John Karasinski}
 \title{Homework \# 1}
 
@@ -306,6 +308,143 @@ T &= \left [ \bm{R_1}(t_1) | \bm{R_2}(t_1) | \bm{R_3}(t_1) | \bm{R_4}(t_1) \righ
 \problem{}
 Consider a robot end-effector with two coordinate systems attached to it as illustrated in Figure P2.17a. One coordinate system is attached to the end-effector with its origin at the wrist center point and the other is attached to the tip of the end-effector. The kinematic structure of the wrist is a spherical linkage and is illustrated in Figure P2.17b.
 
-Show that if we use the coordinate system attached to the end effector at the wrist center point, the order in which we perform the roll,p itch, and yaw rotations is irrelevant; however, if we use the coordinate system attached to the end effector at its tip then the order does not make a difference unless we are only concerned with differential or instantaneous rotations.
+Show that if we use the coordinate system attached to the end effector at the wrist center point, the order in which we perform the roll, pitch, and yaw rotations is irrelevant; however, if we use the coordinate system attached to the end effector at its tip then the order does not make a difference unless we are only concerned with differential or instantaneous rotations. \\
+
+We can first set up a coordinate system, such as
+\begin{align*}
+\du{\Theta}_{12} =
+\begin{bmatrix*}[c]
+1 & 0 & 0 \\
+0 & \cos \alpha & - \sin \alpha \\
+0 & \sin \alpha & \cos \alpha \\
+\end{bmatrix*},
+\hspace{2em}&\hat{w}_1 = \left ( 1, 0, 0 \right ) \\
+\du{\Theta}_{23} =
+\begin{bmatrix*}[c]
+\cos \beta & 0 & \sin \beta \\
+0 & 1 & 0 \\
+-\sin \beta & 0 & \cos \beta \\
+\end{bmatrix*},
+\hspace{2em}&\hat{w}_2 = \left ( 0, 1, 0 \right ) \\
+\du{\Theta}_{34} =
+\begin{bmatrix*}[c]
+\cos \gamma & - \sin \gamma & 0 \\
+\sin \gamma & \cos \gamma & 0 \\
+0 & 0 & 0\\
+\end{bmatrix*},
+\hspace{2em}&\hat{w}_3 = \left ( 0, 0, 1 \right )
+\end{align*}
+
+Combining these rotations yields
+\begin{align*}
+\du{\Theta}_{14} &= \du{\Theta}_{12} \du{\Theta}_{23} \du{\Theta}_{34} \\
+&=
+\begin{bmatrix*}[c]
+                                      \cos \beta \cos \gamma &                                        -\sin \gamma\cos \beta &              \sin \beta \\
+ \sin \alpha \sin \beta \cos \gamma + \sin \gamma\cos \alpha & -\sin \alpha \sin \beta \sin \gamma + \cos \alpha \cos \gamma & -\sin \alpha \cos \beta \\
+\sin \alpha \sin \gamma - \sin \beta \cos \alpha \cos \gamma &   \sin \alpha \cos \gamma + \sin \beta \sin \gamma\cos \alpha &  \cos \alpha \cos \beta \\
+\end{bmatrix*}
+\end{align*}
+
+Finally, the transformation matrix becomes
+\begin{align*}
+\du{T}_{14} =
+\begin{bmatrix*}[c]
+& & & | \hspace{1em} 0 \\
+& \du{\Theta}_{14} & & | \hspace{1em} 0 \\
+& & & | \hspace{1em} 0 \\
+0 & 0 & 0 & | \hspace{1em} 1 \\
+\end{bmatrix*}
+\end{align*}
+
+
+Reversing the order in which we apply these rotations,
+\begin{align*}
+\du{\Theta}_{12}^{R} =
+\begin{bmatrix*}[c]
+\cos \gamma & \sin \gamma & 0 \\
+-\sin \gamma & \cos \gamma & 0 \\
+0 & 0 & 0\\
+\end{bmatrix*},
+\hspace{2em}&\hat{w}_1^R = \left ( 0, 0, -1 \right ) \\
+\du{\Theta}_{23}^{R} =
+\begin{bmatrix*}[c]
+\cos \beta & 0 & -\sin \beta \\
+0 & 1 & 0 \\
+\sin \beta & 0 & \cos \beta \\
+\end{bmatrix*},
+\hspace{2em}&\hat{w}_2^R = \left ( 0, -1, 0 \right ) \\
+\du{\Theta}_{34}^{R} =
+\begin{bmatrix*}[c]
+1 & 0 & 0 \\
+0 & \cos \alpha & \sin \alpha \\
+0 & -\sin \alpha & \cos \alpha \\
+\end{bmatrix*},
+\hspace{2em}&\hat{w}_1^R = \left ( -1, 0, 0 \right ) \\
+\end{align*}
+
+And again combining these rotations,
+\begin{align*}
+\du{\Theta}_{14}^{R} &= \du{\Theta}_{12}^{R} \du{\Theta}_{23}^{R} \du{\Theta}_{34}^{R} \\
+&=
+\begin{bmatrix*}[c]
+ \cos \beta \cos \gamma &  \sin \alpha \sin \beta \cos \gamma + \sin \gamma \cos \alpha & \sin \alpha \sin \gamma - \sin \beta \cos \alpha \cos \gamma \\
+-\sin \gamma \cos \beta & -\sin \alpha \sin \beta \sin \gamma + \cos \alpha \cos \gamma & \sin \alpha \cos \gamma + \sin \beta \sin \gamma \cos \alpha \\
+             \sin \beta &                                       -\sin \alpha \cos \beta &                                       \cos \alpha \cos \beta \\
+\end{bmatrix*} \\
+\end{align*}
+
+Finally, taking the transpose of this rotation yields the following result
+\begin{align*}
+\left ( {\du{\Theta}_{14}^{R}} \right)^T = \du{\Theta}_{41}^{R} &=
+\begin{bmatrix*}[c]
+                                      \cos \beta \cos \gamma &                                       -\sin \gamma \cos \beta &              \sin \beta \\
+\sin \alpha \sin \beta \cos \gamma + \sin \gamma \cos \alpha & -\sin \alpha \sin \beta \sin \gamma + \cos \alpha \cos \gamma & -\sin \alpha \cos \beta \\
+\sin \alpha \sin \gamma - \sin \beta \cos \alpha \cos \gamma &  \sin \alpha \cos \gamma + \sin \beta \sin \gamma \cos \alpha &  \cos \alpha \cos \beta \\
+\end{bmatrix*} \\
+&=\du{\Theta}_{14}
+\end{align*}
+
+And, therefore
+\begin{align*}
+\du{T}_{14} = \du{T}_{41}^R
+\end{align*}
+
+\clearpage
+
+Considering a separate coordinate system attached to the end effector at its tip at a distance $x$
+\begin{align*}
+\du{T}_{ij} =
+\begin{bmatrix*}[c]
+& & & | \hspace{1em} x \\
+& \du{\Theta}_{ij} & & | \hspace{1em} 0 \\
+& & & | \hspace{1em} 0 \\
+0 & 0 & 0 & | \hspace{1em} 1 \\
+\end{bmatrix*}
+\end{align*}
+
+Using all the same definitions as above,
+
+\begin{align*}
+\du{T}_{14} = \du{T}_{12} \du{T}_{23} \du{T}_{34} = 
+\begin{bmatrix*}[c]
+& & \hspace{1em} | & x \left ( \cos \beta + 2 \right ) \\
+& \du{\Theta}_{14} & \hspace{1em} | & x \sin \alpha \sin \beta \\
+& & \hspace{1em} | & -x \sin \beta \cos \alpha \\
+0 & 0 & 0 \hspace{.5em} | & 1 \\
+\end{bmatrix*}
+\end{align*}
+
+\begin{align*}
+\du{T}_{14}^{R} = \du{T}_{12}^{R} \du{T}_{23}^{R} \du{T}_{34}^{R} = 
+\begin{bmatrix*}[c]
+& & \hspace{1em} | & x (\cos \beta \cos \gamma + \cos \gamma + 1) \\
+& \du{\Theta}_{14}^{R} & \hspace{1em} | & -x (\sin \gamma \cos \beta + \sin \gamma) \\
+& & \hspace{1em} | & x \sin \beta \\
+0 & 0 & 0 \hspace{.5em} | & 1 \\
+\end{bmatrix*}
+\end{align*}
+
+And therefore $\du{T}_{14} \neq \du{T}_{14}^{R}$.
 
 \end{document}
