@@ -84,8 +84,8 @@ w = \dfrac{P - O}{\norm{P - O}} &=
 &= 
 \begin{bmatrix*}[c]
 (w_x^2-1)(1 -\cos \theta) + 1 & w_xw_y(1 -\cos \theta) - w_z\sin \theta &  w_xw_z(1 -\cos \theta) + w_y\sin \theta \\
-w_xw_y(1 -\cos \theta) + w_z\sin \theta &  (w_y^2-1)(1 -\cos \theta) + 1 & -w_x\sin \theta + w_yw_z(1 -\cos \theta) \\
-w_xw_z(1 -\cos \theta) - w_y\sin \theta & w_x\sin \theta + w_yw_z(1 -\cos \theta) &   (w_z^2-1)(1 -\cos \theta) + 1 \\
+w_xw_y(1 -\cos \theta) + w_z\sin \theta &  (w_y^2-1)(1 -\cos \theta) + 1 & w_yw_z(1 -\cos \theta)-w_x\sin \theta  \\
+w_xw_z(1 -\cos \theta) - w_y\sin \theta & w_yw_z(1 -\cos \theta) + w_x\sin \theta &   (w_z^2-1)(1 -\cos \theta) + 1 \\
 \end{bmatrix*} \\
 &=
 \begin{bmatrix*}[c]
@@ -96,9 +96,9 @@ w_xw_z(1 -\cos \theta) - w_y\sin \theta & w_x\sin \theta + w_yw_z(1 -\cos \theta
 d &= \left(\du{I} - \du{\Theta} \right ) \underline{P} + \phi \underline{w} \\
 &=
 \begin{bmatrix*}[c]
-\phi w_x   -P_x (w_x^2-1) (1-\cos \theta) + P_y (-w_x w_y (1-\cos \theta) + w_z \sin \theta) + Pz (-w_x w_z (1-\cos \theta) - w_y \sin \theta)\\
-\phi w_y +  P_x (-w_x w_y (1-\cos \theta) - w_z \sin \theta) - P_y (w_y^2 - 1) (1-\cos \theta) + Pz (w_x \sin \theta - w_y w_z (1-\cos \theta))\\
-\phi w_z +  P_x (-w_x w_z (1-\cos \theta) + w_y \sin \theta) + P_y (-w_x \sin \theta - w_y w_z (1-\cos \theta)) - Pz (w_z^2 - 1) (1-\cos \theta)\\
+\phi w_x   -P_x (w_x^2-1) (1-\cos \theta) + P_y (-w_x w_y (1-\cos \theta) + w_z \sin \theta) - Pz (w_x w_z (1-\cos \theta) + w_y \sin \theta)\\
+\phi w_y -  P_x ( w_x w_y (1-\cos \theta) + w_z \sin \theta) - P_y (w_y^2 - 1) (1-\cos \theta) + Pz (- w_y w_z (1-\cos \theta)+w_x \sin \theta )\\
+\phi w_z +  P_x (-w_x w_z (1-\cos \theta) + w_y \sin \theta) - P_y (w_y w_z (1-\cos \theta) + w_x \sin \theta ) - Pz (w_z^2 - 1) (1-\cos \theta)\\
 \end{bmatrix*} \\
 &=
 \begin{bmatrix*}[c]
@@ -132,7 +132,6 @@ Z \\
 \end{bmatrix*}
 \end{align*}
 
-
 \problem{}
 Complete the derivation of the Denavit-Hartenberg (D-H) Transformation from what was done in the classroom using the joint and Shape matrices based on the diagram and the derivation started in the class on 2-1-2018.
 
@@ -153,7 +152,6 @@ w_z & 0 & -w_z \\
 -w_y & w_x & 0
 \end{bmatrix*} 
 \end{align*}
-
 To solve for $\du{S}^{-1}_{h+1, h}$, we define the transformation: \\
 \\
 Fixed coordinate system: $(u v w)_{h'}$ \\
@@ -324,26 +322,5 @@ Finally, plugging this result into row 1 yields
 Y &= \dfrac{1}{\sin \theta} \\
 \alignedbox{Y}{= \dfrac{2 \tan \frac{\theta}{2}}{1 + \tan^2 \frac{\theta}{2}}}
 \end{align*}
-
-% \underline{x}_4 &= \du{T}_{14}^{-1} \underline{x}_1 \\
-% \begin{bmatrix*}[c]
-% X \\
-% Y \\
-% Z \\
-% 1 \\
-% \end{bmatrix*} &=
-% \begin{bmatrix*}[c]
-% \cos \theta & \sin\theta & 0 & -r \\
-% -\sin\theta & \cos\theta & 0 &  0 \\
-%           0 &          0 & 1 & -h \\
-%           0 &          0 & 0 &  1 \\
-% \end{bmatrix*}
-% \begin{bmatrix*}[c]
-% x_1 \\
-% y_1 \\
-% z_1 \\
-% 1 \\
-% \end{bmatrix*}
-% \end{align*}
 
 \end{document}
