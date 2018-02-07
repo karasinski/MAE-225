@@ -214,7 +214,7 @@ S_{h+,h}^{-1} &=
 \begin{bmatrix*}[c]
 \cos \phi_h^1  &  -\sin \phi_h^1  \cos \alpha_h  &  \sin \alpha_h  \sin \phi_h^1  & a_h \cos \phi_h^1  \\
 \sin \phi_h^1  &   \cos \alpha_h  \cos \phi_h^1  & -\sin \alpha_h  \cos \phi_h^1  & a_h \sin \phi_h^1  \\
-             0 &                  \sin(\alpha_h) &                 \cos(\alpha_h) &           \phi_h^2 \\
+             0 &                  \sin \alpha_h  &                 \cos \alpha_h &           \phi_h^2 \\
              0 &                               0 &                              0 &                  1 \\
 \end{bmatrix*}
 \end{align*}
@@ -229,36 +229,36 @@ Consider the robot manipulator shown below.
 
 \begin{center}
 \begin{tabular}{r|rrr}
-& 1 & 2 & 3 \\
+           & 1 & 2 & 3 \\
 \midrule
-$a_i$ &      0 & 0 & $r$ \\
-$\alpha_i$ & 0 & $180^o$ & 0 \\    
-$\theta_i$ & $\theta$ & 0 & $180^o$ \\ 
-$s_i$ &      0 & $h$ & 0 \\
+$a_i$      &          0 &   0 &   0 \\
+$\alpha_i$ &          0 & -90 &   0 \\    
+$\theta_i$ &   $\theta$ &  90 &   0 \\ 
+$s_i$      &          h &   0 &   r \\
 \end{tabular}
 \end{center}
 
 \begin{align*}
 \du{T}_{12} &=
 \begin{bmatrix*}[c]
-\cos \theta & - \sin \theta & 0 & 0 \\
-\sin \theta &   \cos \theta & 0 & 0 \\
-0 & 0 & 1 & 0\\
-0 & 0 & 0 & 1\\
+\cos\theta & -\sin\theta & 0 & 0 \\
+\sin\theta &  \cos\theta & 0 & 0 \\
+         0 &           0 & 1 & h \\
+         0 &           0 & 0 & 1 \\
 \end{bmatrix*},
 \du{T}_{23} =
 \begin{bmatrix*}[c]
-1 & 0 & 0 & 0\\
-0 & 1 & 0 & 0\\
-0 & 0 & -1 & h\\
-0 & 0 & 0 & 1\\
+0 &  0 & -1 & 0 \\
+1 &  0 &  0 & 0 \\
+0 & -1 &  0 & 0 \\
+0 &  0 &  0 & 1 \\
 \end{bmatrix*},
 \du{T}_{34} =
 \begin{bmatrix*}[c]
--1 & 0 & 0 & r\\
-0 & 1 & 0 & 0\\
-0 & 0 & 1 & 0\\
-0 & 0 & 0 & 1\\
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & r \\
+0 & 0 & 0 & 1 \\
 \end{bmatrix*}
 \end{align*}
 \begin{align*}
@@ -271,10 +271,10 @@ z_1 \\
 \end{bmatrix*}
 & =
 \begin{bmatrix*}[c]
--\cos \theta & -\sin \theta & 0 & r \cos \theta \\
--\sin \theta &  \cos \theta & 0 & r \sin \theta \\
-         0 &           0 & 1 &            -h \\
-         0 &           0 & 0 &            1 \\
+-\sin \theta &  0 & -\cos \theta & -r \cos \theta \\
+ \cos \theta &  0 & -\sin \theta & -r \sin \theta \\
+          0 & -1 &           0 &             h \\
+          0 &  0 &           0 &             1 \\
 \end{bmatrix*}
 \begin{bmatrix*}[c]
 X \\
@@ -282,45 +282,108 @@ Y \\
 Z \\
 1 \\
 \end{bmatrix*}\\
+&=
 \begin{bmatrix*}[c]
-0 \\
-0 \\
-0 \\
+-X \sin \theta - Z \cos \theta - r \cos \theta \\
+ X \cos \theta - Z \sin \theta - r \sin \theta \\
+                                      -Y + h \\
+                                            1 \\
+\end{bmatrix*}\\
+\underline{x}_4 &= \left ( \du{T}_{12} \du{T}_{23} \du{T}_{34} \right )^{-1} = \du{T}_{41} \underline{x}_1 \\
+\begin{bmatrix*}[c]
+X \\
+Y \\
+Z \\
 1 \\
-\end{bmatrix*} &=
+\end{bmatrix*}
+&=
 \begin{bmatrix*}[c]
--X \cos \theta - Y \sin \theta + r \cos \theta \\
--X \sin \theta + Y \cos \theta + r \sin \theta \\
-                                     Z - h \\
-                                         1 \\
+ -\sin\theta &  \cos\theta &  0 &  0 \\
+           0 &           0 & -1 &  h \\
+ -\cos\theta & -\sin\theta &  0 & -r \\
+           0 &           0 &  0 &  1 \\
+\end{bmatrix*}
+\begin{bmatrix*}[c]
+x_1 \\
+y_1 \\
+z_1 \\
+1 \\
+\end{bmatrix*} \\
+&=
+\begin{bmatrix*}[c]
+    -x_1 \sin \theta + y_1 \cos \theta \\
+                              -z_1 + h \\
+-x_1 \cos \theta - y_1 \sin \theta - r \\
+                                     1 \\
 \end{bmatrix*}
 \end{align*}
-Which gives us three equations. The third row is immediately solvable,
-\begin{align*}
-\alignedbox{Z}{= h}
-\end{align*}
-Setting rows one and two to zero, and then squaring yields
-\begin{align*}
-\left (-X + r \right)^2 \cos^2 \theta &= Y^2 \sin^2 \theta \\
-\left (-X + r \right)^2 \sin^2 \theta &= Y^2 \cos^2 \theta \\
-\end{align*}
-Adding these and taking advantage of trignometric identities
-\begin{align*}
-\left (-X + r \right)^2 \left (\cos^2 \theta+ \sin^2 \theta \right)  &= Y^2 \left (\cos^2 \theta+ \sin^2 \theta \right) \\
-Y &= -X + r \\
-\end{align*}
-Substituting this back in row 2 yields
-\begin{align*}
-% 0 &= X \cos \theta - \left (X + r \right) \sin \theta + r \cos \theta \\
-0 &= -X \sin \theta + \left (-X + r \right) \cos \theta + r \sin \theta \\
-0 &= -X \left( \sin \theta + \cos \theta \right) + r \left (\cos \theta + \sin \theta \right) \\
-\alignedbox{X}{= r}
-\end{align*}
-Finally, plugging this result into row 1 yields
-\begin{align*}
-0 &= -r \cos \theta - Y \sin \theta + r \cos \theta \\
-Y &= \dfrac{1}{\sin \theta} \\
-\alignedbox{Y}{= \dfrac{2 \tan \frac{\theta}{2}}{1 + \tan^2 \frac{\theta}{2}}}
-\end{align*}
+
+% We can now write three equations,
+% \begin{align*}
+% \du{T}_{12}^{-1} \underline{x}_1 &= \du{T}_{23} \du{T}_{34} \underline{x}_4 \\
+% \du{T}_{23}^{-1} \du{T}_{12}^{-1} \underline{x}_1 &= \du{T}_{34} \underline{x}_4 \\
+% \du{T}_{34}^{-1} \du{T}_{23}^{-1} \du{T}_{12}^{-1} \underline{x}_1 &= \underline{x}_4 \\
+% \end{align*}
+
+% \begin{align*}
+% \du{T}_{12}^{-1} P_1 = \du{T}_{23} \du{T}_{34} P_4 \\
+% \begin{bmatrix*}[c]
+% x_1 ( \ \sin^2 \theta + 1) \ \cos \theta + y_1 \ \sin \theta \\
+%                     -x_1 \ \sin \theta + y_1 \ \cos \theta \\
+%                                              z_1 - h \\
+%                                                    1 \\
+% \end{bmatrix*}
+% =
+% \begin{bmatrix*}[c]
+% -Z - r \\
+%      X \\
+%     -Y \\
+%           1 \\
+% \end{bmatrix*}\\
+% \du{T}_{23}^{-1} \du{T}_{12}^{-1} P_{1}= \du{T}_{34} P_{4}\\
+% \begin{bmatrix*}[c]
+%                      -x_1 \ \sin \theta + y_1 \ \cos \theta \\
+%                                              -z_1 + h \\
+% -x_1 ( \ \sin^2 \theta + 1) \ \cos \theta - y_1 \ \sin \theta \\
+%                                                     1 \\
+% \end{bmatrix*}
+% =
+% \begin{bmatrix*}[c]
+%     X \\
+%     Y \\
+% Z + r \\
+%       1 \\
+% \end{bmatrix*}
+% \end{align*}
+
+
+
+
+% Which gives us three equations. The third row is immediately solvable,
+% \begin{align*}
+% \alignedbox{Z}{= h}
+% \end{align*}
+% Setting rows one and two to zero, and then squaring yields
+% \begin{align*}
+%  X^2 \sin^2 \theta = (Y - r)^2 \cos^2 \theta \\
+%  X^2 \cos^2 \theta = (Y - r)^2 \sin^2 \theta \\
+% \end{align*}
+% Adding these and taking advantage of trigonometric identities
+% \begin{align*}
+% \left (X \right)^2 \left (\cos^2 \theta+ \sin^2 \theta \right)  &= \left( Y - r \right )^2 \left (\cos^2 \theta+ \sin^2 \theta \right) \\
+% X &= Y - r
+% \end{align*}
+% Substituting this back in row 2 yields
+% \begin{align*}
+% 0 &= (Y - r) \sin \theta - Y \cos \theta + r \cos \theta \\
+% 0 &= Y (\sin \theta - \cos \theta) - r (\sin \theta - \cos \theta) \\
+% \alignedbox{Y}{= r}
+% \end{align*}
+% Finally, plugging this result into row 1 yields
+% \begin{align*}
+% 0 &= -r \cos \theta - Y \sin \theta + r \cos \theta \\
+% Y &= \dfrac{1}{\sin \theta} \\
+% \alignedbox{Y}{= \dfrac{2 \tan \frac{\theta}{2}}{1 + \tan^2 \frac{\theta}{2}}}
+% \end{align*}
 
 \end{document}
