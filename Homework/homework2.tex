@@ -19,7 +19,7 @@
 \usepackage{pgfplots}
 \usepackage{siunitx}
 \usepackage{wrapfig}
- 
+
 % Command "alignedbox{}{}" for a box within an align environment
 % Source: http://www.latex-community.org/forum/viewtopic.php?f=46&t=8144
 \newlength\dlf  % Define a new measure, dlf
@@ -28,11 +28,11 @@
 % Argument #2 = after & if there were no box (rhs)
 &  % Alignment sign of the line
 {
-\settowidth\dlf{$\displaystyle #1$}  
+\settowidth\dlf{$\displaystyle #1$}
     % The width of \dlf is the width of the lhs, with a displaystyle font
-\addtolength\dlf{\fboxsep+\fboxrule}  
+\addtolength\dlf{\fboxsep+\fboxrule}
     % Add to it the distance to the box, and the width of the line of the box
-\hspace{-\dlf}  
+\hspace{-\dlf}
     % Move everything dlf units to the left, so that & #1 #2 is aligned under #1 & #2
 \boxed{#1 #2}
     % Put a box around lhs and rhs
@@ -59,7 +59,7 @@ In an industrial application a part is to turn 20 degrees about a rod shown belo
 
 Given
 \begin{align*}
-P = 
+P =
 \begin{bmatrix*}[c]
 0 \\
 0 \\
@@ -81,7 +81,7 @@ w = \dfrac{P - O}{\norm{P - O}} &=
 
 \begin{align*}
 \du{\Theta} &= \du{I} + \du{\widetilde{w}} \sin \phi + \du{\widetilde{w}}^2 \left ( 1 - \cos\phi \right ) \\
-&= 
+&=
 \begin{bmatrix*}[c]
 (w_x^2-1)(1 -\cos \theta) + 1 & w_xw_y(1 -\cos \theta) - w_z\sin \theta &  w_xw_z(1 -\cos \theta) + w_y\sin \theta \\
 w_xw_y(1 -\cos \theta) + w_z\sin \theta &  (w_y^2-1)(1 -\cos \theta) + 1 & w_yw_z(1 -\cos \theta)-w_x\sin \theta  \\
@@ -145,12 +145,12 @@ Complete the derivation of the Denavit-Hartenberg (D-H) Transformation from what
 0 & 0 & 0 & 1
 \end{bmatrix*} \\
 \du{\Theta} &= \du{I} + \du{\widetilde{w}} \sin \phi + \du{\widetilde{w}}^2 \left ( 1 - \cos\phi \right ) \\
-\du{\widetilde{w}} &= 
+\du{\widetilde{w}} &=
 \begin{bmatrix*}[c]
 0 & -w_z & w_y \\
 w_z & 0 & -w_z \\
 -w_y & w_x & 0
-\end{bmatrix*} 
+\end{bmatrix*}
 \end{align*}
 To solve for $\du{S}^{-1}_{h+1, h}$, we define the transformation: \\
 \\
@@ -232,8 +232,8 @@ Consider the robot manipulator shown below.
            & 1 & 2 & 3 \\
 \midrule
 $a_i$      &          0 &   0 &   0 \\
-$\alpha_i$ &          0 & -90 &   0 \\    
-$\theta_i$ &   $\theta$ &  90 &   0 \\ 
+$\alpha_i$ &          0 & -90 &   0 \\
+$\theta_i$ &   $\theta$ &  90 &   0 \\
 $s_i$      &          h &   0 &   r \\
 \end{tabular}
 \end{center}
@@ -289,101 +289,51 @@ Z \\
                                       -Y + h \\
                                             1 \\
 \end{bmatrix*}\\
-\underline{x}_4 &= \left ( \du{T}_{12} \du{T}_{23} \du{T}_{34} \right )^{-1} = \du{T}_{41} \underline{x}_1 \\
-\begin{bmatrix*}[c]
-X \\
-Y \\
-Z \\
-1 \\
-\end{bmatrix*}
-&=
-\begin{bmatrix*}[c]
- -\sin\theta &  \cos\theta &  0 &  0 \\
-           0 &           0 & -1 &  h \\
- -\cos\theta & -\sin\theta &  0 & -r \\
-           0 &           0 &  0 &  1 \\
-\end{bmatrix*}
-\begin{bmatrix*}[c]
-x_1 \\
-y_1 \\
-z_1 \\
-1 \\
-\end{bmatrix*} \\
-&=
-\begin{bmatrix*}[c]
-    -x_1 \sin \theta + y_1 \cos \theta \\
-                              -z_1 + h \\
--x_1 \cos \theta - y_1 \sin \theta - r \\
-                                     1 \\
-\end{bmatrix*}
+% \underline{x}_4 &= \left ( \du{T}_{12} \du{T}_{23} \du{T}_{34} \right )^{-1} = \du{T}_{41} \underline{x}_1 \\
+% \begin{bmatrix*}[c]
+% X \\
+% Y \\
+% Z \\
+% 1 \\
+% \end{bmatrix*}
+% &=
+% \begin{bmatrix*}[c]
+%  -\sin\theta &  \cos\theta &  0 &  0 \\
+%            0 &           0 & -1 &  h \\
+%  -\cos\theta & -\sin\theta &  0 & -r \\
+%            0 &           0 &  0 &  1 \\
+% \end{bmatrix*}
+% \begin{bmatrix*}[c]
+% x_1 \\
+% y_1 \\
+% z_1 \\
+% 1 \\
+% \end{bmatrix*} \\
+% &=
+% \begin{bmatrix*}[c]
+%     -x_1 \sin \theta + y_1 \cos \theta \\
+%                               -z_1 + h \\
+% -x_1 \cos \theta - y_1 \sin \theta - r \\
+%                                      1 \\
+% \end{bmatrix*}
 \end{align*}
-
-% We can now write three equations,
-% \begin{align*}
-% \du{T}_{12}^{-1} \underline{x}_1 &= \du{T}_{23} \du{T}_{34} \underline{x}_4 \\
-% \du{T}_{23}^{-1} \du{T}_{12}^{-1} \underline{x}_1 &= \du{T}_{34} \underline{x}_4 \\
-% \du{T}_{34}^{-1} \du{T}_{23}^{-1} \du{T}_{12}^{-1} \underline{x}_1 &= \underline{x}_4 \\
-% \end{align*}
-
-% \begin{align*}
-% \du{T}_{12}^{-1} P_1 = \du{T}_{23} \du{T}_{34} P_4 \\
-% \begin{bmatrix*}[c]
-% x_1 ( \ \sin^2 \theta + 1) \ \cos \theta + y_1 \ \sin \theta \\
-%                     -x_1 \ \sin \theta + y_1 \ \cos \theta \\
-%                                              z_1 - h \\
-%                                                    1 \\
-% \end{bmatrix*}
-% =
-% \begin{bmatrix*}[c]
-% -Z - r \\
-%      X \\
-%     -Y \\
-%           1 \\
-% \end{bmatrix*}\\
-% \du{T}_{23}^{-1} \du{T}_{12}^{-1} P_{1}= \du{T}_{34} P_{4}\\
-% \begin{bmatrix*}[c]
-%                      -x_1 \ \sin \theta + y_1 \ \cos \theta \\
-%                                              -z_1 + h \\
-% -x_1 ( \ \sin^2 \theta + 1) \ \cos \theta - y_1 \ \sin \theta \\
-%                                                     1 \\
-% \end{bmatrix*}
-% =
-% \begin{bmatrix*}[c]
-%     X \\
-%     Y \\
-% Z + r \\
-%       1 \\
-% \end{bmatrix*}
-% \end{align*}
-
-
-
-
-% Which gives us three equations. The third row is immediately solvable,
-% \begin{align*}
-% \alignedbox{Z}{= h}
-% \end{align*}
-% Setting rows one and two to zero, and then squaring yields
-% \begin{align*}
-%  X^2 \sin^2 \theta = (Y - r)^2 \cos^2 \theta \\
-%  X^2 \cos^2 \theta = (Y - r)^2 \sin^2 \theta \\
-% \end{align*}
-% Adding these and taking advantage of trigonometric identities
-% \begin{align*}
-% \left (X \right)^2 \left (\cos^2 \theta+ \sin^2 \theta \right)  &= \left( Y - r \right )^2 \left (\cos^2 \theta+ \sin^2 \theta \right) \\
-% X &= Y - r
-% \end{align*}
-% Substituting this back in row 2 yields
-% \begin{align*}
-% 0 &= (Y - r) \sin \theta - Y \cos \theta + r \cos \theta \\
-% 0 &= Y (\sin \theta - \cos \theta) - r (\sin \theta - \cos \theta) \\
-% \alignedbox{Y}{= r}
-% \end{align*}
-% Finally, plugging this result into row 1 yields
-% \begin{align*}
-% 0 &= -r \cos \theta - Y \sin \theta + r \cos \theta \\
-% Y &= \dfrac{1}{\sin \theta} \\
-% \alignedbox{Y}{= \dfrac{2 \tan \frac{\theta}{2}}{1 + \tan^2 \frac{\theta}{2}}}
-% \end{align*}
+Looking at the last column of the transformation matrix, we can write
+\begin{align*}
+\alignedbox{X}{= -r \cos \theta} \\
+\alignedbox{Y}{= -r \sin \theta} \\
+\alignedbox{Z}{= h} \\
+\end{align*}
+From which we can immediately pull
+\begin{align*}
+\alignedbox{h}{=Z}
+\end{align*}
+And, with some minor manipulation,
+\begin{align*}
+X^2 &= r^2 \cos^2 \theta \\
+Y^2 &= r^2 \sin^2 \theta \\
+\alignedbox{r}{= (X^2 + Y^2)^{\frac{1}{2}}} \\
+\dfrac{X}{(X^2 + Y^2)^{\frac{1}{2}}} &= -\cos \theta \\
+\alignedbox{\theta}{=\cos^{-1} \left ( \dfrac{-X}{(X^2 + Y^2)^{\frac{1}{2}}} \right)}
+\end{align*}
 
 \end{document}
