@@ -1,0 +1,59 @@
+\documentclass[onecolumn,10pt]{jhwhw}
+
+\usepackage{algpseudocode}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{color}
+\usepackage{commath}
+\usepackage{empheq}
+\usepackage{epsfig}
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{pdfpages}
+\usepackage{pgfplots}
+\usepackage{siunitx}
+\usepackage{wrapfig}
+
+% Command "alignedbox{}{}" for a box within an align environment
+% Source: http://www.latex-community.org/forum/viewtopic.php?f=46&t=8144
+\newlength\dlf  % Define a new measure, dlf
+\newcommand\alignedbox[2]{
+% Argument #1 = before & if there were no box (lhs)
+% Argument #2 = after & if there were no box (rhs)
+&  % Alignment sign of the line
+{
+\settowidth\dlf{$\displaystyle #1$}
+    % The width of \dlf is the width of the lhs, with a displaystyle font
+\addtolength\dlf{\fboxsep+\fboxrule}
+    % Add to it the distance to the box, and the width of the line of the box
+\hspace{-\dlf}
+    % Move everything dlf units to the left, so that & #1 #2 is aligned under #1 & #2
+\boxed{#1 #2}
+    % Put a box around lhs and rhs
+}
+}
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+\def\du#1{\underline{\underline{#1}}}
+
+\author{John Karasinski}
+\title{Homework \# 3}
+
+\begin{document}
+%\maketitle
+
+\problem{}
+Consider a robot manipulator as show in Figure P5.6. The kinematic structure of this robotic arm is very similar to that of the Stanford manipulator studied in example 5.6 except that it has an offset (a) between the base and the shoulder (the first two) join axes. For this robotic arm, derive and solve the kinematic position equations using shape and joint matrices.
+
+\problem{}
+For the robot manipulator of problem 5.6, derive the kinematic position equations using Denavit-Hartenberg transformation matrices and find the solution to these equations using the partitioning method of section 5.7.
+
+\end{document}
