@@ -378,7 +378,7 @@ For the robot manipulator of problem 5.6, derive the kinematic position equation
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=\linewidth]{homework3-diagram.pdf}
+  \includegraphics[width=\linewidth]{homework3-diagramDH.jpg}
   % \caption{}
   % \label{}
 \end{figure}
@@ -388,7 +388,7 @@ For the robot manipulator of problem 5.6, derive the kinematic position equation
            & 1          & 2          & 3            & 4          & 5           & 6          \\
 \midrule
 $a_i$      & $a$        & 0          & 0            & 0          & 0           & 0          \\
-$\alpha_i$ & $-\ang{90}$ & $\ang{90}$ & 0            & $\ang{90}$ & $\ang{-90}$ & $\ang{90}$ \\
+$\alpha_i$ & $\ang{90}$ & $\ang{90}$ & 0            & $\ang{90}$ & $\ang{90}$  & 0          \\
 $s_i$      & $h$        & 0          & $l + \phi_3$ & $m$        & $n$         & 0          \\
 $\theta_i$ & $\phi_1$   & $\phi_2$   & 0            & $\phi_4$   & $\phi_5$    & $\phi_6$   \\
 \end{tabular}
@@ -397,9 +397,9 @@ $\theta_i$ & $\phi_1$   & $\phi_2$   & 0            & $\phi_4$   & $\phi_5$    &
 \begin{align*}
 & T_1=
 \begin{bmatrix*}[c]
-\cos \phi_1 &  0 & -\sin \phi_1 & a \cos \phi_1 \\
-\sin \phi_1 &  0 &  \cos \phi_1 & a \sin \phi_1 \\
-          0 & -1 &          0 &           h \\
+\cos \phi_1 &  0 &  \sin \phi_1 & a \cos \phi_1 \\
+\sin \phi_1 &  0 & -\cos \phi_1 & a \sin \phi_1 \\
+          0 &  1 &          0 &           h \\
           0 &  0 &          0 &           1 \\
 \end{bmatrix*},
 & T_2=
@@ -425,20 +425,19 @@ $\theta_i$ & $\phi_1$   & $\phi_2$   & 0            & $\phi_4$   & $\phi_5$    &
 \end{bmatrix*}, \\
 & T_5=
 \begin{bmatrix*}[c]
-\cos \phi_5 &  0 & -\sin \phi_5 & 0 \\
-\sin \phi_5 &  0 &  \cos \phi_5 & 0 \\
-        0 & -1 &          0 & n \\
+\cos \phi_5 &  0 &  \sin \phi_5 & 0 \\
+\sin \phi_5 &  0 & -\cos \phi_5 & 0 \\
+        0 &  1 &          0 & n \\
         0 &  0 &          0 & 1 \\
 \end{bmatrix*},
 & T_6=
 \begin{bmatrix*}[c]
-\cos \phi_6 & 0 &  \sin \phi_6 & 0 \\
-\sin \phi_6 & 0 & -\cos \phi_6 & 0 \\
-        0 & 1 &          0 & 0 \\
-        0 & 0 &          0 & 1 \\
+\cos \phi_6 &  \sin \phi_6 & 0 &  0 \\
+\sin \phi_6 & -\cos \phi_6 & 0 &  0 \\
+          0 &            0 & 1 &  0 \\
+          0 &            0 & 0 &  1 \\
 \end{bmatrix*}
 \end{align*}
-
 % \begin{align*}
 % x_1 &= T_1 T_2 T_3 x_4 \\
 % T_3^{-1} T_2^{-1} T_1^{-1} x_1 &= x_4 \\
@@ -476,5 +475,40 @@ $\theta_i$ & $\phi_1$   & $\phi_2$   & 0            & $\phi_4$   & $\phi_5$    &
 % \end{bmatrix*} \\
 % \end{align*}
 
+\begin{align*}
+T_{23}^{-1} T_{12}^{-1} R_C = T_{34} r_C^4 \\
+\begin{bmatrix*}[c]
+X \cos \phi_1 \cos \phi_2 + Y \cos \phi_2 \sin \phi_1 + Z \sin \phi_2 - a \cos \phi_2 - h \sin \phi_2 \\
+                                                                        X \sin \phi_1 - Y \cos \phi_1 \\
+X \cos \phi_1 \sin \phi_2 + Y \sin \phi_1 \sin \phi_2 - Z \cos \phi_2 - a \sin \phi_2 + h \cos \phi_2 \\
+                                                                                                    1 \\
+\end{bmatrix*} &=
+\begin{bmatrix*}[c]
+       0 \\
+       0 \\
+l + \phi_3 \\
+       1 \\
+\end{bmatrix*}
+\end{align*}
+The first angle can be solved for using the second equation
+\begin{align*}
+0 &= X \sin \phi_1 - Y \cos \phi_1 \\
+Y \cos \phi_1 &= X \sin \phi_1 \\
+\tan \phi_1 &= \dfrac{Y}{X} \\
+\phi_1 &= \tan^{-1} \dfrac{Y}{X} \\
+\end{align*}
+The second angle can be solved for using the first equation
+\begin{align*}
+0 &= \cos \phi_2 \left(X \cos \phi_1 + Y \sin \phi_1 - a \right) + \sin \phi_2 \left(Z  - h \right) \\
+-\cos \phi_2 \left(X \cos \phi_1 + Y \sin \phi_1 - a \right) &= \sin \phi_2 \left(Z  - h \right) \\
+\tan \phi_2 &= \dfrac{-\left(Z  - h \right)}{\left(X \cos \phi_1 + Y \sin \phi_1 - a \right)} \\
+\phi_2 &= \tan^{-1} \left( \dfrac{h - Z}{X \cos \phi_1 + Y \sin \phi_1 - a} \right) \\
+% l + \phi_3 &= \sin \phi_2 \left(X \cos \phi_1 + Y \sin \phi_1 - a \right) \cos \phi_2 \left(- Z  + h\right) \\
+\end{align*}
+Finally, the last angle can be solved for using the third equation, as all other variables are now known
+\begin{align*}
+l + \phi_3 &= \sin \phi_2 \left(X \cos \phi_1 + Y \sin \phi_1 - a \right) \cos \phi_2 \left(- Z  + h\right) \\
+\phi_3 &= \sin \phi_2 \left(X \cos \phi_1 + Y \sin \phi_1 - a \right) \cos \phi_2 \left(- Z  + h\right) - l \\
+\end{align*}
 
 \end{document}
