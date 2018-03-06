@@ -1,0 +1,79 @@
+\documentclass[onecolumn,10pt]{jhwhw}
+
+\usepackage{algpseudocode}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{color}
+\usepackage{commath}
+\usepackage{empheq}
+\usepackage{epsfig}
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{pdfpages}
+\usepackage{pgfplots}
+\usepackage{siunitx}
+\usepackage{wrapfig}
+
+% Command "alignedbox{}{}" for a box within an align environment
+% Source: http://www.latex-community.org/forum/viewtopic.php?f=46&t=8144
+\newlength\dlf  % Define a new measure, dlf
+\newcommand\alignedbox[2]{
+% Argument #1 = before & if there were no box (lhs)
+% Argument #2 = after & if there were no box (rhs)
+&  % Alignment sign of the line
+{
+\settowidth\dlf{$\displaystyle #1$}
+    % The width of \dlf is the width of the lhs, with a displaystyle font
+\addtolength\dlf{\fboxsep+\fboxrule}
+    % Add to it the distance to the box, and the width of the line of the box
+\hspace{-\dlf}
+    % Move everything dlf units to the left, so that & #1 #2 is aligned under #1 & #2
+\boxed{#1 #2}
+    % Put a box around lhs and rhs
+}
+}
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+\def\du#1{\underline{\underline{#1}}}
+
+\author{John Karasinski}
+\title{Project}
+
+\begin{document}
+%\maketitle
+
+\begin{enumerate}
+  \item Introduction
+    \begin{enumerate}
+      \item What is it? Diagram!
+    \end{enumerate}
+  \item Finite Kinematic Analysis
+    \begin{enumerate}
+      \item Method 1: D-H Formulation
+        \begin{enumerate}
+          \item Derive kinematic equation using D-H matrices, present Table of D-H parameters
+        \end{enumerate}
+      \item Method 2: Derive Shape/Joint Matrices
+        \begin{enumerate}
+          \item Solution for the direct and inverse kinematic
+        \end{enumerate}
+      \item Numerical Example
+    \end{enumerate}
+  \item Differential Kinematic Analysis
+    \begin{enumerate}
+      \item Derive the Jacobian using two methods
+      \item Write velocity equation
+    \end{enumerate}
+  \item Conclusions
+  \item References
+\end{enumerate}
+
+\end{document}
