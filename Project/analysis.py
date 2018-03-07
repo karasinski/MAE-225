@@ -10,7 +10,8 @@ class Transform:
         self.DHMatrix()
 
     def DHMatrix(self):
-        phi = rad(self.phi)
+        # phi = rad(self.phi)
+        phi = self.phi
         alpha = rad(self.alpha)
         a = self.a
         d = self.d
@@ -27,100 +28,42 @@ class Transform:
 # Let's do an analysis with the SSRMS with the shoulder roll joint locked at an angle beta
 
 beta = symbols('beta')
-Theta1, Theta2, Theta3, Theta4, Theta5, Theta6, Theta7 = symbols("Theta1 Theta2 Theta3 Theta4 Theta5 Theta6 Theta7")
-d10, d20, d30, d60, d70, a30, a40 = symbols('d10 d20 d30 d60 d70 a30 a40')
+theta1, theta2, theta3, theta4, theta5, theta6, theta7 = symbols("theta1 theta2 theta3 theta4 theta5 theta6 theta7")
+d1, d2, d3, d6, d7, a3, a4 = symbols('d1 d2 d3 d6 d7 a3 a4')
 
-# # # T1 = DHMatrix( 90 + Theta1, 90,   0, d10);
-# # T2 = DHMatrix( 90 + Theta2 + beta, 90,   0, d20);
-# # T3 = DHMatrix(  0 + Theta3,         0, a30, d30);
-# # T4 = DHMatrix(  0 + Theta4,         0, a40,   0);
-# # T5 = DHMatrix(180 + Theta5,        90,   0,   0);
-# # T6 = DHMatrix(-90 + Theta6,        90,   0, d60);
-# # T7 = DHMatrix(180 + Theta7,        90,   0, d70);
+# SSRMS
+configs = [[theta1, 90,  0, d1],
+           [theta2, 90,  0, d2],
+           [theta3,  0, a3, d3],
+           [theta4,  0, a4,  0],
+           [theta5, 90,  0,  0],
+           [theta6, 90,  0, d6],
+           [theta7, 90,  0, d7]]
 
-# # Define the DH matrices for each link
-# # T1 = DHMatrix(Theta1, 90,   0, d10);
-# A23 = DHMatrix(Theta2 + beta, 90,   0, d20);
-# A34 = DHMatrix(Theta3,         0, a30, d30);
-# A45 = DHMatrix(Theta4,         0, a40,   0);
-# A56 = DHMatrix(Theta5,        90,   0,   0);
-# A67 = DHMatrix(Theta6,        90,   0, d60);
-# A78 = DHMatrix(Theta7,        90,   0, d70);
+# Stanford Arm Example from Class
+# configs = [[theta1, -90, 0,  0],
+#            [theta2,  90, 0, d2],
+#            [   -90,   0, 0, d3],
+#            [theta4, -90, 0,  0],
+#            [theta5,  90, 0,  0],
+#            [theta6,   0, 0,  0]]
 
-# # Grab the rotation matrix from each A matrix
-# R23 = A23[:3, :3]
-# R34 = A34[:3, :3]
-# R45 = A45[:3, :3]
-# R56 = A56[:3, :3]
-# R67 = A67[:3, :3]
-# R78 = A78[:3, :3]
-
-# # And grab the displacement vectors
-# a2 = A23[:3, 3]
-# a3 = A34[:3, 3]
-# a4 = A45[:3, 3]
-# a5 = A56[:3, 3]
-# a6 = A67[:3, 3]
-# a7 = A78[:3, 3]
-
-# # The z_i's need to be WRT the base coordinate system
-# z = Matrix([[0], [0], [1]])
-
-# z2 = z
-# z3 = R23 * z
-# z4 = R23 * R34 * z
-# z5 = R23 * R34 * R45 * z
-# z6 = R23 * R34 * R45 * R56 * z
-# z7 = R23 * R34 * R45 * R56 * R67 * z
-
-# r7 = R67 * 
-
-# # Let's assume that the shoulder roll joint is locked at beta = 0
-# T = (A2 * A3 * A4 * A5 * A6 * A7).subs({beta: 0})
-
-
-# configs = [[Theta2 + beta, 90,   0, d20],
-#          [Theta3,         0, a30, d30],
-#          [Theta4,         0, a40,   0],
-#          [Theta5,        90,   0,   0],
-#          [Theta6,        90,   0, d60],
-#          [Theta7,        90,   0, d70]]
-
-
-configs = [[Theta1, -90, 0,   0],
-           [Theta2,  90, 0, d20],
-           [   -90,   0, 0, d30],
-           [Theta4, -90, 0,   0],
-           [Theta5,  90, 0,   0],
-           [Theta6,   0, 0,   0]]
-
+# Build our robot
 T = []
 for config in configs:
     T.append(Transform(*config))
 
-# T23 = Transform(Theta2 + beta, 90,   0, d20);
-# T34 = Transform(Theta3,         0, a30, d30);
-# T45 = Transform(Theta4,         0, a40,   0);
-# T56 = Transform(Theta5,        90,   0,   0);
-# T67 = Transform(Theta6,        90,   0, d60);
-# T78 = Transform(Theta7,        90,   0, d70);
-
 # The z_i's need to be WRT the base coordinate system
 z = Matrix([[0], [0], [1]])
 
+# Calculate all our z vectors
 for i, _ in enumerate(T):
     rot = Identity(3)
     for j in range(i):
         rot *= T[j].R 
     T[i].z = rot * z
 
-# T23.z = z
-# T34.z = T23.R * z
-# T45.z = T23.R * T34.R * z
-# T56.z = T23.R * T34.R * T45.R * z
-# T67.z = T23.R * T34.R * T45.R * T56.R * z
-# T78.z = T23.R * T34.R * T45.R * T56.R * T67.R * z
-
+# Loop through backwards to calculate the r vectors
 for i, _ in enumerate(T):
     i = len(T) - (i+1)
     rot = Identity(3)
@@ -131,21 +74,31 @@ for i, _ in enumerate(T):
         rot += T[i+1].r
     T[i].r = rot
 
-# T78.r = T23.R * T34.R * T45.R * T56.R * T67.R * T78.vecA
-# T67.r = T23.R * T34.R * T45.R * T56.R * T67.vecA + T78.r
-# T56.r = T23.R * T34.R * T45.R * T56.vecA + T67.r
-# T45.r = T23.R * T34.R * T45.vecA + T56.r
-# T34.r = T23.R * T34.vecA + T45.r
-# T23.r = T23.vecA + T34.r
-
+# Calculate the z skew matrices and compute cross products
 for i, _ in enumerate(T):
     T[i].z_skew = Matrix([[         0, -T[i].z[2],  T[i].z[1]],
                           [ T[i].z[2],          0, -T[i].z[0]],
                           [-T[i].z[1],  T[i].z[0],         0]])
     T[i].crossed = T[i].z_skew * T[i].r
 
+# Combine elements to form Jacobian
 top, bottom = Matrix(), Matrix()
 for i, _ in enumerate(T):
     top = top.row_join(T[i].crossed)
     bottom = bottom.row_join(T[i].z)
 J = top.col_join(bottom)
+
+# Assume that beta is set to zero
+J0 = J.subs({beta: 0})
+
+# T07 = T[0].A * T[1].A * T[2].A * T[3].A * T[4].A * T[5].A * T[6].A
+
+# We know that 
+n_x, n_y, n_z, o_x, o_y, o_z, a_x, a_y, a_z, p_x, p_y, p_z = symbols('n_x n_y n_z o_x o_y o_z a_x a_y a_z p_x p_y p_z')
+T07 = Matrix([[n_x, o_x, a_x, p_x],
+              [n_y, o_y, a_y, p_y],
+              [n_z, o_z, a_z, p_z],
+              [  0,   0,   0,   1]])
+
+# And setting T01^-1 * T07 = T12 T23 T34 T45 T56 T67
+print(latex(T[0].A.inv() * T07))
