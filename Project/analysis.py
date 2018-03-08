@@ -101,4 +101,30 @@ T07 = Matrix([[n_x, o_x, a_x, p_x],
               [  0,   0,   0,   1]])
 
 # And setting T01^-1 * T07 = T12 T23 T34 T45 T56 T67
-print(latex(T[0].A.inv() * T07))
+# print(latex(T[0].A.inv() * T07))
+
+Q_rev = Matrix([[0, -1, 0, 0],
+                [1,  0, 0, 0],
+                [0,  0, 0, 0],
+                [0,  0, 0, 0]])
+
+for i, _ in enumerate(T):
+  print('i ', i)
+  if i > 0:
+    T[i].Ti = T[i-1].Ti * T[i].A
+  if i == 0:
+    T[i].Ti = T[i].A
+  T[i].Ti.simplify()
+
+  T[i].D = simplify(T[i].Ti * Q_rev) * simplify(T[i].Ti.inv())
+  # print(latex(Di))
+
+for i in range(7):
+  print('i ', i)
+  print(latex(simplify(T[i].D[0, 3])))
+  print(latex(simplify(T[i].D[1, 3])))
+  print(latex(simplify(T[i].D[2, 3])))
+  print(latex(simplify(T[i].D[2, 1])))
+  print(latex(simplify(T[i].D[0, 2])))
+  print(latex(simplify(T[i].D[1, 0])))
+  print('\n')
