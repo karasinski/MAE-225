@@ -41,6 +41,8 @@
 % Default fixed font does not support bold face
 \DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
 \DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+\DeclareMathOperator{\atantwo}{atan2}
+\DeclareMathOperator{\acos}{acos}
 
 \def\du#1{\underline{\underline{#1}}}
 
@@ -157,7 +159,7 @@ where we have defined $s_i = \sin{i}, c_i = \cos{i}, s_{ij} = \sin{\left(i+j\rig
 
 Manipulating the equations, we take $\left(Eq.~\ref{eq1} \right) s_2 - \left(Eq.~\ref{eq2} \right) c_2$ and simplify, producing
 \begin{align}
-\left(n_{x} c_1 + n_{y} s_1\right) s_2 - n_{z} c_2 &= s_{6} c_{7}
+\left(n_{x} c_1 + n_{y} s_1\right) s_2 - n_{z} c_2 &= s_{6} c_{7} \label{eqc3}
 \end{align}
 Similarly, we can do $\left(Eq.~\ref{eq3} \right) s_2-\left(Eq.~\ref{eq4}\right) c_2$ and simplify, which results in
 \begin{align}
@@ -169,7 +171,7 @@ o_{z} c_2 - \left( o_{x} c_1 + o_{y} s_1 \right) s_2 &= c_{6} \label{eqc2}
 \end{align}
 Finally, we can also subtract $\left(Eq.~\ref{eq7} \right) s_2 - \left(Eq.~\ref{eq8} \right) c_2$
 \begin{align}
-\left(a_{x} c_1 + a_{y} s_1\right) s_2 - a_{z} c_2 &= s_{6} s_{7}
+\left(a_{x} c_1 + a_{y} s_1\right) s_2 - a_{z} c_2 &= s_{6} s_{7} \label{eqc4}
 \end{align}
 
 Rearranging Equations~\ref{eqc1} and \ref{eqc2} to be equal to $c_6$ and equating the two yields
@@ -180,8 +182,88 @@ Rearranging Equations~\ref{eqc1} and \ref{eqc2} to be equal to $c_6$ and equatin
 
 Locking the shoulder roll angle to a known angle, $\theta_1 = \beta$, we can solve for $\theta_2$,
 \begin{align}
--d_3 &= \left( \left( o_{x} d_7 - p_{x} \right) c_1 + \left( o_{y} d_7 - p_{y} \right) s_1 \right) s_2 + \left(-o_{z} d_7 - d_{1} + p_{z} \right) c_2 
+\theta_2 &= \mbox{SHOULDER} \cdot \acos \left( \dfrac{d_3}{\sqrt{h_1^2 + q_1^2}} \right) + \atantwo(q_1,h_1)
 \end{align}
+where
+\begin{align}
+h_1 &= \left(-o_{z} d_7 - d_{1} + p_{z} \right) \\
+q_1 &= \left( \left( o_{x} d_7 - p_{x} \right) c_{\beta} + \left( o_{y} d_7 - p_{y} \right) s_{\beta} \right)
+\end{align}
+With $\theta_1$ and $\theta_2$ now known, $\theta_6$ can be solved using Equation~\ref{eqc2},
+\begin{align}
+\theta_6 &= \mbox{WRIST} \cdot \acos \left(o_{z} c_2 - \left( o_{x} c_1 + o_{y} s_1 \right) s_2 \right)
+\end{align}
+And we can then combine Equations~\ref{eqc3} and~\ref{eqc4}, yielding
+\begin{align}
+\theta_7 &= \atantwo \left( \dfrac{\left(n_{x} c_1 + n_{y} s_1\right) s_2 - n_{z} c_2}{s_6},
+\dfrac{\left(a_{x} c_1 + a_{y} s_1\right) s_2 - a_{z} c_2}{s_6}\right)
+\end{align}
+%when $s_6=0, c_6 = \pm 1$, and we can solve for $\theta_7$ using Equations~\ref{eq1} and~\ref{eq7}
+%\begin{align}
+%n_{x} c_1 + n_{y} s_1 &= c_{2} \left(\pm c_{345} c_{7} + s_{345} s_{7} \right) \nonumber \\
+%					  &= \pm c_{2} \cos\left(\theta_{345} \mp \theta_7\right) \\
+%a_{x} c_1 + a_{y} s_1 &= c_{2} \left(\pm c_{345} s_{7} - s_{345} c_{7} \right) \nonumber\\
+%					  &= \pm c_{2} \cos\left(\theta_{345} \pm \theta_7\right)
+%\end{align}
+%For $c_6 = +1$, then,
+%\begin{align}
+%n_{x} c_1 + n_{y} s_1 &= + c_{2} \cos\left(\theta_{345} - \theta_7\right) \\
+%a_{x} c_1 + a_{y} s_1 &= + c_{2} \cos\left(\theta_{345} + \theta_7\right)
+%\end{align}
+%And for $c_6 =-1$ we have,
+%\begin{align}
+%n_{x} c_1 + n_{y} s_1 &= - c_{2} \cos\left(\theta_{345} + \theta_7\right) \\
+%a_{x} c_1 + a_{y} s_1 &= - c_{2} \cos\left(\theta_{345} - \theta_7\right)
+%\end{align}
+With the shoulder and wrist joints resolved, we can now solve for the middle joints. We now take
+\begin{align*}
+\left(T_{12}^{-1} \right) \left(T_{17}\right) \left(T_{67}^{-1}\right) \left(T_{56}^{-1}\right) = \left(T_{23}\right) \left(T_{34}\right) \left(T_{45}\right)
+\end{align*}
+% \begin{align*}
+% % LHS &=
+% % & \left(a_{z} s_{2} + c_{2}\left(a_{x} c_{1} + a_{y} s_{1}\right) \right) s_{7} c_{6} + \left(n_{z} s_{2} + c_{2}\left(n_{x} c_{1} - n_{y} c_{1} \right) \right) c_{6} c_{7} + \left(o_{z} s_{2} + c_{2}\left(o_{x} c_{1} - o_{y} c_{1} \right) \right) s_{6}  \\
+% % & \left(a_{z} s_{2} + c_{2}\left(a_{x} c_{1} + a_{y} s_{1}\right) \right) s_{6} s_{7} + \left(n_{z} s_{2} + c_{2}\left(n_{x} c_{1} - n_{y} c_{1} \right) \right) s_{6} c_{7} - \left(o_{z} s_{2} + c_{2}\left(o_{x} c_{1} - o_{y} c_{1} \right) \right) c_{6}  \\
+% % & - \left(a_{z} s_{2} + c_{2}\left(a_{x} c_{1} + a_{y} s_{1}\right) \right) c_{7} + \left(n_{z} s_{2} + c_{2}\left(n_{x} c_{1} - n_{y} c_{1} \right) \right) s_{7}  \\
+% & d_{6} \left(a_{z} s_{2} + c_{2}\left(a_{x} c_{1} + a_{y} s_{1}\right) \right) c_{7} - d_{6} \left(n_{z} s_{2} + c_{2}\left(n_{x} c_{1} - n_{y} c_{1} \right) \right) s_{7} - d_{7} \left(o_{z} s_{2} + c_{2}\left(o_{x} c_{1} - o_{y} c_{1} \right) \right) + \left(- d_{1} + p_{z}\right) s_{2} + c_{2}\left(p_{x} c_{1} + \frac{p_{y} \left(-c_{1}\right)}{}\right) \\
+% % & \left(a_{x} s_{1} - a_{y} c_{1}\right) s_{7} c_{6} + \left(n_{x} s_{1} - n_{y} c_{1}\right) c_{6} c_{7} + \left(o_{x} s_{1} - o_{y} c_{1}\right) s_{6}  \\
+% % & \left(a_{x} s_{1} - a_{y} c_{1}\right) s_{6} s_{7} + \left(n_{x} s_{1} - n_{y} c_{1}\right) s_{6} c_{7} - \left(o_{x} s_{1} - o_{y} c_{1}\right) c_{6}  \\
+% % & - \left(a_{x} s_{1} - a_{y} c_{1}\right) c_{7} + \left(n_{x} s_{1} - n_{y} c_{1}\right) s_{7}  \\
+% & - d_{2} + d_{6} \left(a_{x} s_{1} - a_{y} c_{1}\right) c_{7} - d_{6} \left(n_{x} s_{1} - n_{y} c_{1}\right) s_{7} - d_{7} \left(o_{x} s_{1} - o_{y} c_{1}\right) + p_{x} s_{1} - p_{y} c_{1} \\
+% % & \left(- a_{z} c_{2} + \left(a_{x} c_{1} + a_{y} s_{1}\right) s_{2}\right) s_{7} c_{6} + \left(- n_{z} c_{2} + \left(n_{x} c_{1} - n_{y} c_{1} \right) s_{2}\right) c_{6} c_{7} + \left(- o_{z} c_{2} + \left(o_{x} c_{1} - o_{y} c_{1} \right) s_{2}\right) s_{6}  \\
+% % & \left(- a_{z} c_{2} + \left(a_{x} c_{1} + a_{y} s_{1}\right) s_{2}\right) s_{6} s_{7} + \left(- n_{z} c_{2} + \left(n_{x} c_{1} - n_{y} c_{1} \right) s_{2}\right) s_{6} c_{7} - \left(- o_{z} c_{2} + \left(o_{x} c_{1} - o_{y} c_{1} \right) s_{2}\right) c_{6}  \\
+% % & - \left(- a_{z} c_{2} + \left(a_{x} c_{1} + a_{y} s_{1}\right) s_{2}\right) c_{7} + \left(- n_{z} c_{2} + \left(n_{x} c_{1} - n_{y} c_{1} \right) s_{2}\right) s_{7} \\
+% % & d_{6} \left(- a_{z} c_{2} + \left(a_{x} c_{1} + a_{y} s_{1}\right) s_{2}\right) c_{7} - d_{6} \left(- n_{z} c_{2} + \left(n_{x} c_{1} - n_{y} c_{1} \right) s_{2}\right) s_{7} - d_{7} \left(- o_{z} c_{2} + \left(o_{x} c_{1} - o_{y} c_{1} \right) s_{2}\right) - \left(- d_{1} + p_{z}\right) c_{2} + \left(p_{x} c_{1} + \frac{p_{y} \left(-c_{1}\right)}{}\right) s_{2} \\
+% % & 0  \\
+% % & 0  \\
+% % & 0  \\
+% % & 1 \\
+% \end{align*}
+% \begin{align*}
+% % RHS &=
+% % \cos{\left (\theta_{3} + \theta_{4} + \theta_{5} \right )}  \\
+% % & 0  \\
+% % & \sin{\left (\theta_{3} + \theta_{4} + \theta_{5} \right )}  \\
+% & a_{3} \cos{\left (\theta_{3} \right )} + a_{4} \cos{\left (\theta_{3} + \theta_{4} \right )} \\
+% % \\\sin{\left (\theta_{3} + \theta_{4} + \theta_{5} \right )}  \\
+% % & 0  \\
+% % & - \cos{\left (\theta_{3} + \theta_{4} + \theta_{5} \right )}  \\
+% & a_{3} \sin{\left (\theta_{3} \right )} + a_{4} \sin{\left (\theta_{3} + \theta_{4} \right )} \\
+% % \\0  \\
+% % & 1  \\
+% % & 0  \\
+% % & d_{3} \\
+% % \\0  \\
+% % & 0  \\
+% % & 0  \\
+% % & 1 \\
+% \end{align*}
+Taking the left and right hand side $\left(1, 4\right)$ and $\left(2, 4 \right)$ elements from the resulting matrix yields
+\begin{align*}
+a_{3} c_{3} + a_{4} c_{34} &= d_{6} \left(a_{z} s_{2} + c_{2}\left(a_{x} c_{1} + a_{y} s_{1}\right) \right) c_{7} - d_{6} \left(n_{z} s_{2} + c_{2}\left(n_{x} c_{1} - n_{y} c_{1} \right) \right) s_{7}  \\
+                           % &\phantom{=} - d_{7} \left(o_{z} s_{2} + c_{2}\left(o_{x} c_{1} - o_{y} c_{1} \right) \right) + \left(- d_{1} + p_{z}\right) s_{2} + c_{2}\left(p_{x} c_{1} - p_{y} c_{1}\right) \\
+                           &\phantom{=} - d_{7} \left(o_{z} s_{2} + c_{2}\left(o_{x} c_{1} + o_{y} s_{1} \right) \right) + \left(- d_{1} + p_{z}\right) s_{2} + c_{2}\left(p_{x} c_{1} + p_{y} s_{1}\right) \\
+a_{3} s_{3} + a_{4} s_{34} &= - d_{2} + d_{6} \left(a_{x} s_{1} - a_{y} c_{1}\right) c_{7} - d_{6} \left(n_{x} s_{1} - n_{y} c_{1}\right) s_{7} - d_{7} \left(o_{x} s_{1} - o_{y} c_{1}\right) + p_{x} s_{1} - p_{y} c_{1}
+\end{align*}
 
 \nocite{*}
 \bibliography{bib} 
