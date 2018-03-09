@@ -1,4 +1,4 @@
-\documentclass[onecolumn,10pt]{jhwhw}
+\documentclass{article}
 
 \usepackage{algpseudocode}
 \usepackage{amsfonts}
@@ -47,43 +47,25 @@
 \def\du#1{\underline{\underline{#1}}}
 
 \author{John Karasinski}
-\title{Project}
+\title{SSRMS}
 
 \begin{document}
-%\maketitle
-
-\begin{enumerate}
-  \item Introduction
-    \begin{enumerate}
-      \item What is it? Diagram!
-    \end{enumerate}
-  \item Finite Kinematic Analysis
-    \begin{enumerate}
-      \item Method 1: D-H Formulation
-        \begin{enumerate}
-          \item Derive kinematic equation using D-H matrices, present Table of D-H parameters
-        \end{enumerate}
-      \item Method 2: Derive Shape/Joint Matrices
-        \begin{enumerate}
-          \item Solution for the direct and inverse kinematic
-        \end{enumerate}
-      \item Numerical Example
-    \end{enumerate}
-  \item Differential Kinematic Analysis
-    \begin{enumerate}
-      \item Derive the Jacobian using two methods
-      \item Write velocity equation
-    \end{enumerate}
-  \item Conclusions
-  \item References
-\end{enumerate}
+\maketitle
+\tableofcontents
+\clearpage
 
 \section{Introduction}
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{ssrms.jpg}
+\end{figure}
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{dh.jpg}
+\end{figure}
 We're going to play with a shoulder roll locked SSRMS.
 
 \section{Finite Kinematic Analysis}
 \subsection{Denavit-Hartenberg Parameters}
-
 \begin{table}[h]
 \centering
 \begin{tabular}{c|*{4}{c}}
@@ -99,7 +81,7 @@ $i$ & $\theta_i$ & $\alpha_i$ & $a_i$ & $d_i$ \\
 7 & 180 & 90 &     0 & $d_7$ \\
 \bottomrule
 \end{tabular}
-\caption{The Denavit-Hartenberg parameters for the SSRMS. These parameters are the joint angle, $\theta$, the link twist angle, $\alpha$, the link length, $a$, and the joint offset, $d$. These $\theta_i$s give the initial or "zero-displacement" configuration, but each $\theta_i$ is modeled as an individual variable below.}
+\caption{The Denavit-Hartenberg parameters for the SSRMS. These parameters are the joint angle, $\theta$, the link twist angle, $\alpha$, the link length, $a$, and the joint offset, $d$. These $\theta_i$s give the initial or ``zero-displacement" configuration, but each $\theta_i$ is modeled as an individual variable below.}
 \end{table}
 The resulting matrices are therefore
 \begin{align*}
@@ -141,6 +123,94 @@ T_{07}[4, 3] =& 0 \\
 T_{07}[4, 4] =& 1 \\
 \end{align*}
 
+\subsection{Joint/Shape Matrices}
+We can similarly use joint and shape matrices to arrive at these $T$ matrices. All of the joints of the SSRMS are revolute, and can be modeled with the joint matrix of
+\begin{align*}
+\Phi_h \left( \phi_h \right) =
+\left[\begin{matrix}
+\cos \phi_h & -\sin \phi_h & 0 & 0 \\
+\sin \phi_h & \cos \phi_h & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1
+\end{matrix}\right]
+\end{align*}
+\begin{align*}
+T_{i,i+1} &= S_{i, j} \Phi_j S_{i+1,j}^{-1} \\
+T_{12} &= S_{1A} \Phi_A S_{2A}^{-1} \\
+T_{23} &= S_{2B} \Phi_B S_{3B}^{-1} \\
+T_{34} &= S_{3C} \Phi_C S_{4C}^{-1} \\
+T_{45} &= S_{4D} \Phi_D S_{5D}^{-1} \\
+T_{56} &= S_{5E} \Phi_E S_{6E}^{-1} \\
+T_{67} &= S_{6F} \Phi_F S_{7F}^{-1} \\
+T_{78} &= S_{7G} \Phi_G S_{8G}^{-1} \\
+\end{align*}
+For joints $\Phi_A, \Phi_B, \Phi_C, \Phi_D, \Phi_E, \Phi_F,$ and $\Phi_G$, we also define two shape matrices.
+\begin{align*}
+T_{01} & =
+\begin{bmatrix*}[c]
+ 1 & 0 & 0 & x_0 \\
+ 0 & 1 & 0 & y_0 \\
+ 0 & 0 & 1 & z_0 \\
+ 0 & 0 & 0 & 1 \\
+\end{bmatrix*}, \\
+S_{1A} &= I, 
+S_{2A} =
+\begin{bmatrix*}[c]
+1 & 0 & 0 & 0 \\
+0 & 0 & 1 & -d_1 \\
+0 & -1 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{bmatrix*}, \\
+S_{2B} &= I, 
+S_{3B} = 
+\begin{bmatrix*}[c]
+1 & 0 & 0 & 0 \\
+0 & 0 & 1 & -d_2 \\
+0 & -1 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{bmatrix*}, \\
+S_{3C} &= I, 
+S_{4C} = 
+\begin{bmatrix*}[c]
+1 & 0 & 0 & -a_3 \\
+0 & 0 & 1 & -d_3 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{bmatrix*}, \\
+S_{4D} &= I, 
+S_{5D} = 
+\begin{bmatrix*}[c]
+1 & 0 & 0 & -a_3 \\
+0 & 0 & 1 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{bmatrix*}, \\
+S_{5E} &= I, 
+S_{6E} = 
+\begin{bmatrix*}[c]
+1 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & -1 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{bmatrix*}, \\
+S_{6F} &= I, 
+S_{7F} = 
+\begin{bmatrix*}[c]
+1 & 0 & 0 & 0 \\
+0 & 0 & 1 & -d_6 \\
+0 & -1 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{bmatrix*}, \\ 
+S_{7G} &= I, 
+S_{8G} = 
+\begin{bmatrix*}[c]
+1 & 0 & 0 & 0 \\
+0 & 0 & 1 & -d_7 \\
+0 & -1 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{bmatrix*}
+\end{align*}
+
 \subsection{Inverse Kinematics Solution}
 In general we can define
 \begin{align*}
@@ -177,7 +247,6 @@ p_{x} s_1 - p_{y} c_1 &= a_{3} s_{3} + a_{4} s_{34} + d_{2} - d_{6} c_{345} + d_
 1                     &= 1
 \end{align}
 where we have defined $s_i = \sin{i}, c_i = \cos{i}, s_{ij} = \sin{\left(i+j\right)}, c_{ij} = \cos{\left(i+j\right)}, s_{ijk} = \sin{\left(i+j+k\right)}$ and $c_{ijk} = \cos{\left(i+j+k\right)}$.
-
 Manipulating the equations, we take $\left(Eq.~\ref{eq1} \right) s_2 - \left(Eq.~\ref{eq2} \right) c_2$ and simplify, producing
 \begin{align}
 \left(n_{x} c_1 + n_{y} s_1\right) s_2 - n_{z} c_2 &= s_{6} c_{7} \label{eqc3}
@@ -194,12 +263,10 @@ Finally, we can also subtract $\left(Eq.~\ref{eq7} \right) s_2 - \left(Eq.~\ref{
 \begin{align}
 \left(a_{x} c_1 + a_{y} s_1\right) s_2 - a_{z} c_2 &= s_{6} s_{7} \label{eqc4}
 \end{align}
-
 Rearranging Equations~\ref{eqc1} and \ref{eqc2} to be equal to $c_6$ and equating the two yields
 \begin{align}
--d_3 &= \left( \left( o_{x} d_7 - p_{x} \right) c_1 + \left( o_{y} d_7 - p_{y} \right) s_1 \right) s_2 + \left(-o_{z} d_7 - d_{1} + p_{z} \right) c_2 
+-d_3 &= \left( \left( o_{x} d_7 - p_{x} \right) c_1 + \left( o_{y} d_7 - p_{y} \right) s_1 \right) s_2 + \left(-o_{z} d_7 - d_{1} + p_{z} \right) c_2
 \end{align}
-
 Locking the shoulder roll angle to a known angle, $\boxed{\theta_1 = \beta}$, we can solve for $\theta_2$,
 \begin{align}
 \boxed{\theta_2 = \mbox{SHOULDER} \cdot \acos \left( \dfrac{d_3}{\sqrt{h_1^2 + q_1^2}} \right) + \atantwo(q_1,h_1)}
@@ -241,7 +308,7 @@ Substituting the solution into $\theta_4$ and Equations~\ref{mj1} and~\ref{mj2} 
 \begin{align*}
 \theta_3 = \atantwo \left(Y \left( a_3 + a_4 c_4 \right) c_7 - X a_4 s_4, X \left(a_3 + a_4 c_4 \right) + Y a_4 s_4 \right)
 \end{align*}
-Subtracting $(\ref{th52})*c_7$ and $\ref{th51}*s_7$ yields
+Subtracting $(\ref{th52}) c_7$ and $\ref{th51} s_7$ yields
 \begin{align*}
 c_{345} &= \left(a_{x} s_1 - a_{y} c_1\right) c_7 - \left(n_{x} s_1 - n_{y} c_1 \right) s_7
 \end{align*}
@@ -255,9 +322,57 @@ which we can combine to solve for the last joint
 \alignedbox{\theta_5}{=\atantwo \left(s_{345}, c_{345} \right) - \left(\theta_3 + \theta_4 \right)}
 \end{align*}
 
-\section{Differential Kinematic Analysis}
-\subsection{Jacobian Method 1}
+\subsection{Numerical Example}
+Numerical example?
 
+\section{Differential Kinematic Analysis}
+\subsection{Method 1: Kinematic Jacobian}
+
+Where $\hat{z}_i$ is taken from the last column of $T_{1i}$, and can be defined
+\begin{align*}
+T_{1i} &=
+\left[\begin{matrix}
+  & \du{\Theta}_i &   & \vdots & a_i \\
+  & \hdots   &   &        & \hdots \\
+0 &        0 & 0 & \vdots & 0
+\end{matrix}\right] \\
+\du{\Theta}_i &= 
+\left[\begin{matrix}
+& & \\
+x_i & y_i & z_i \\
+& &
+\end{matrix}\right] \\
+\hat{z}_i &= \left( \prod_{i=1}^n \du{\Theta}_i \right) z_i
+\end{align*}
+and $\vec{r}_i$ is defined 
+\begin{align*}
+\vec{r}_i = \sum_{i=1}^n \vec{a}_i
+\end{align*}
+With these definitions, we can find the Jacobian via
+\begin{align*}
+\dot{\vec{P}} &= \sum_{i=1}^{n} \left( \hat{z}_i \times \vec{r}_i \right) \dot{\theta}_i \\
+\vec{w} &= \sum_{i=1}^{n} \dot{\theta}_i \hat{z}_i \\
+\du{J} \dot{q} &= 
+\left[\begin{matrix}
+\underline{\dot{P}} \\
+\underline{\vec{w}}
+\end{matrix}\right] \\
+\left[\begin{matrix}
+\hat{z}_1 \times \vec{r}_1 & \hat{z}_2 \times \vec{r}_2 & \cdots & \hat{z}_7 \times \vec{r}_7 \\
+\hat{z}_1 & \hat{z}_2 & \cdots & \hat{z}_7
+\end{matrix}\right]
+\left[\begin{matrix}
+\dot{\theta}_1 \\
+\dot{\theta}_2 \\
+\vdots \\
+\dot{\theta}_7 \\
+\end{matrix}\right]
+&= 
+\left[\begin{matrix}
+\underline{\dot{P}}_{EE} \\
+\underline{w}_{EE} \\
+\end{matrix}\right] \\
+\end{align*}
 \begin{align*}
 J[1,1] &= - a_{3} s_{1} c_{2} c_{3} + a_{3} s_{3} c_{1} - a_{4} s_{1} c_{2} c_{34} + a_{4} s_{34} c_{1} + d_{2} c_{1} - d_{3} s_{1} s_{2} \\
        &\phantom{= }- d_{6} s_{1} s_{345} c_{2} - d_{6} c_{1} c_{345} + d_{7} s_{1} s_{2} c_{6} - d_{7} s_{1} s_{6} c_{2} c_{345} + d_{7} s_{6} s_{345} c_{1} \\
@@ -285,7 +400,6 @@ J[5,3] &= s_{1} s_{2} \\
 J[6,3] &= - c_{2} \\
 \end{align*}
 \begin{align*}
-\\
 J[1,4] &= a_{4} s_{1} c_{34} - a_{4} s_{34} c_{1} c_{2} + d_{6} s_{1} s_{345} + d_{6} c_{1} c_{2} c_{345} + d_{7} s_{1} s_{6} c_{345} - d_{7} s_{6} s_{345} c_{1} c_{2} \\
 J[2,4] &= - a_{4} s_{1} s_{34} c_{2} - a_{4} c_{1} c_{34} + d_{6} s_{1} c_{2} c_{345} - d_{6} s_{345} c_{1} - d_{7} s_{1} s_{6} s_{345} c_{2} - d_{7} s_{6} c_{1} c_{345} \\
 J[3,4] &= \left(- a_{4} s_{34} + d_{6} c_{345} - d_{7} s_{6} s_{345}\right) s_{2} \\
@@ -315,8 +429,7 @@ J[5,7] &= \left(s_{1} c_{2} c_{345} - s_{345} c_{1}\right) s_{6} - s_{1} s_{2} c
 J[6,7] &= s_{2} s_{6} c_{345} + c_{2} c_{6} \\
 \end{align*}
 
-\subsection{Jacobian Method 2}
-
+\subsection{Method 2: Geometric Jacobian}
 We first form our $D_i$ matrices from
 \begin{align*}
 D_i = T_{0i} Q_i T_{0i}^{-1}
@@ -331,7 +444,6 @@ Q &=
     0 &  0 & 0 & 0 \\
 \end{matrix}\right] \\
 \end{align*}
-
 Selecting elements from these $D_i$ matrices, we form the Jacobian via
 \begin{align*}
 J &=
@@ -346,45 +458,82 @@ J &=
 \end{align*}
 Resulting in
 \begin{align*}
-J[1,1] &= d_{1} \cos{\left (\theta_{1} \right )} \\
-J[2,1] &= d_{1} \sin{\left (\theta_{1} \right )} \\
+J[1,1] &= d_{1} c_{1} \\
+J[2,1] &= d_{1} s_{1} \\
 J[3,1] &= 0 \\
-J[4,1] &= \sin{\left (\theta_{1} \right )} \\
-J[5,1] &= - \cos{\left (\theta_{1} \right )} \\
+J[4,1] &= s_{1} \\
+J[5,1] &= - c_{1} \\
 J[6,1] &= 0 \\
 \\
-J[1,2] &= - d_{1} \sin{\left (\theta_{1} \right )} \sin{\left (\theta_{2} \right )} + d_{2} \cos{\left (\theta_{1} \right )} \cos{\left (\theta_{2} \right )} \\
-J[2,2] &= d_{1} \sin{\left (\theta_{2} \right )} \cos{\left (\theta_{1} \right )} + d_{2} \sin{\left (\theta_{1} \right )} \cos{\left (\theta_{2} \right )} \\
-J[3,2] &= d_{2} \sin{\left (\theta_{2} \right )} \\
-J[4,2] &= \sin{\left (\theta_{2} \right )} \cos{\left (\theta_{1} \right )} \\
-J[5,2] &= \sin{\left (\theta_{1} \right )} \sin{\left (\theta_{2} \right )} \\
-J[6,2] &= - \cos{\left (\theta_{2} \right )} \\
+J[1,2] &= - d_{1} s_{1} s_{2} + d_{2} c_{1} c_{2} \\
+J[2,2] &= d_{1} s_{2} c_{1} + d_{2} s_{1} c_{2} \\
+J[3,2] &= d_{2} s_{2} \\
+J[4,2] &= s_{2} c_{1} \\
+J[5,2] &= s_{1} s_{2} \\
+J[6,2] &= - c_{2} \\
 \\
-J[1,3] &= - a_{3} \sin{\left (\theta_{1} \right )} \cos{\left (\theta_{3} \right )} + a_{3} \sin{\left (\theta_{3} \right )} \cos{\left (\theta_{1} \right )} \cos{\left (\theta_{2} \right )} - d_{1} \sin{\left (\theta_{1} \right )} \sin{\left (\theta_{2} \right )} + d_{2} \cos{\left (\theta_{1} \right )} \cos{\left (\theta_{2} \right )} \\
-J[2,3] &= a_{3} \sin{\left (\theta_{1} \right )} \sin{\left (\theta_{3} \right )} \cos{\left (\theta_{2} \right )} + a_{3} \cos{\left (\theta_{1} \right )} \cos{\left (\theta_{3} \right )} + d_{1} \sin{\left (\theta_{2} \right )} \cos{\left (\theta_{1} \right )} + d_{2} \sin{\left (\theta_{1} \right )} \cos{\left (\theta_{2} \right )} \\
-J[3,3] &= \left(a_{3} \sin{\left (\theta_{3} \right )} + d_{2}\right) \sin{\left (\theta_{2} \right )} \\
-J[4,3] &= \sin{\left (\theta_{2} \right )} \cos{\left (\theta_{1} \right )} \\
-J[5,3] &= \sin{\left (\theta_{1} \right )} \sin{\left (\theta_{2} \right )} \\
-J[6,3] &= - \cos{\left (\theta_{2} \right )} \\
+J[1,3] &= - a_{3} s_{1} c_{3} + a_{3} s_{3} c_{1} c_{2} - d_{1} s_{1} s_{2} + d_{2} c_{1} c_{2} \\
+J[2,3] &= a_{3} s_{1} s_{3} c_{2} + a_{3} c_{1} c_{3} + d_{1} s_{2} c_{1} + d_{2} s_{1} c_{2} \\
+J[3,3] &= \left(a_{3} s_{3} + d_{2}\right) s_{2} \\
+J[4,3] &= s_{2} c_{1} \\
+J[5,3] &= s_{1} s_{2} \\
+J[6,3] &= - c_{2} \\
 \\
-J[1,4] &= - a_{3} \sin{\left (\theta_{1} \right )} \cos{\left (\theta_{3} \right )} + a_{3} \sin{\left (\theta_{3} \right )} \cos{\left (\theta_{1} \right )} \cos{\left (\theta_{2} \right )} - a_{4} \sin{\left (\theta_{1} \right )} \cos{\left (\theta_{3} + \theta_{4} \right )} + a_{4} \sin{\left (\theta_{3} + \theta_{4} \right )} \cos{\left (\theta_{1} \right )} \cos{\left (\theta_{2} \right )} - d_{1} \sin{\left (\theta_{1} \right )} \sin{\left (\theta_{2} \right )} + d_{2} \cos{\left (\theta_{1} \right )} \cos{\left (\theta_{2} \right )} \\
-J[2,4] &= a_{3} \sin{\left (\theta_{1} \right )} \sin{\left (\theta_{3} \right )} \cos{\left (\theta_{2} \right )} + a_{3} \cos{\left (\theta_{1} \right )} \cos{\left (\theta_{3} \right )} + a_{4} \sin{\left (\theta_{1} \right )} \sin{\left (\theta_{3} + \theta_{4} \right )} \cos{\left (\theta_{2} \right )} + a_{4} \cos{\left (\theta_{1} \right )} \cos{\left (\theta_{3} + \theta_{4} \right )} + d_{1} \sin{\left (\theta_{2} \right )} \cos{\left (\theta_{1} \right )} + d_{2} \sin{\left (\theta_{1} \right )} \cos{\left (\theta_{2} \right )} \\
-J[3,4] &= \left(a_{3} \sin{\left (\theta_{3} \right )} + a_{4} \sin{\left (\theta_{3} + \theta_{4} \right )} + d_{2}\right) \sin{\left (\theta_{2} \right )} \\
-J[4,4] &= \sin{\left (\theta_{2} \right )} \cos{\left (\theta_{1} \right )} \\
-J[5,4] &= \sin{\left (\theta_{1} \right )} \sin{\left (\theta_{2} \right )} \\
-J[6,4] &= - \cos{\left (\theta_{2} \right )} \\
+J[1,4] &= - a_{3} s_{1} c_{3} + a_{3} s_{3} c_{1} c_{2} - a_{4} s_{1} c_{34} + a_{4} s_{34} c_{1} c_{2} - d_{1} s_{1} s_{2} + d_{2} c_{1} c_{2} \\
+J[2,4] &= a_{3} s_{1} s_{3} c_{2} + a_{3} c_{1} c_{3} + a_{4} s_{1} s_{34} c_{2} + a_{4} c_{1} c_{34} + d_{1} s_{2} c_{1} + d_{2} s_{1} c_{2} \\
+J[3,4] &= \left(a_{3} s_{3} + a_{4} s_{34} + d_{2}\right) s_{2} \\
+J[4,4] &= s_{2} c_{1} \\
+J[5,4] &= s_{1} s_{2} \\
+J[6,4] &= - c_{2}
+\end{align*}
+\begin{align*}
+J[1,5] &= - \left(d_{1} c_{2} - d_{3}\right) \left(s_{1} s_{345} + c_{1} c_{2} c_{345}\right) - \left(a_{3} c_{45} + a_{4} c_{5} + d_{1} s_{2} c_{345} + d_{2} s_{345}\right) s_{2} c_{1} \\
+J[2,5] &= - \left(d_{1} c_{2} - d_{3}\right) \left(s_{1} c_{2} c_{345} - s_{345} c_{1}\right) - \left(a_{3} c_{45} + a_{4} c_{5} + d_{1} s_{2} c_{345} + d_{2} s_{345}\right) s_{1} s_{2} \\
+J[3,5] &= a_{3} c_{2} c_{45} + a_{4} c_{2} c_{5} + d_{2} s_{345} c_{2} + d_{3} s_{2} c_{345} \\
+J[4,5] &= - s_{1} c_{345} + s_{345} c_{1} c_{2} \\
+J[5,5] &= s_{1} s_{345} c_{2} + c_{1} c_{345} \\
+J[6,5] &= s_{2} s_{345} \\
+\\
+J[1,6] &= \left(\left(s_{1} s_{345} + c_{1} c_{2} c_{345}\right) c_{6} + s_{2} s_{6} c_{1}\right) \left(a_{3} s_{45} + a_{4} s_{5} + d_{1} s_{2} s_{345} - d_{2} c_{345} + d_{6}\right) \\
+       &\phantom{=} + \left(s_{1} c_{345} - s_{345} c_{1} c_{2}\right) \left(a_{3} c_{6} c_{45} + a_{4} c_{5} c_{6} + d_{1} s_{2} c_{6} c_{345} - d_{1} s_{6} c_{2} + d_{2} s_{345} c_{6} + d_{3} s_{6}\right) \\
+J[2,6] &= \left(\left(s_{1} c_{2} c_{345} - s_{345} c_{1}\right) c_{6} + s_{1} s_{2} s_{6}\right) \left(a_{3} s_{45} + a_{4} s_{5} + d_{1} s_{2} s_{345} - d_{2} c_{345} + d_{6}\right) \\
+       &\phantom{=} - \left(s_{1} s_{345} c_{2} + c_{1} c_{345}\right) \left(a_{3} c_{6} c_{45} + a_{4} c_{5} c_{6} + d_{1} s_{2} c_{6} c_{345} - d_{1} s_{6} c_{2} + d_{2} s_{345} c_{6} + d_{3} s_{6}\right) \\
+J[3,6] &= \left(s_{2} c_{6} c_{345} - s_{6} c_{2}\right) \left(a_{3} s_{45} + a_{4} s_{5} + d_{1} s_{2} s_{345} - d_{2} c_{345} + d_{6}\right) \\
+       &\phantom{=} - \left(a_{3} c_{6} c_{45} + a_{4} c_{5} c_{6} + d_{1} s_{2} c_{6} c_{345} - d_{1} s_{6} c_{2} + d_{2} s_{345} c_{6} + d_{3} s_{6}\right) s_{2} s_{345} \\
+J[4,6] &= s_{1} s_{6} s_{345} - s_{2} c_{1} c_{6} + s_{6} c_{1} c_{2} c_{345} \\
+J[5,6] &= - s_{1} s_{2} c_{6} + s_{1} s_{6} c_{2} c_{345} - s_{6} s_{345} c_{1} \\
+J[6,6] &= s_{2} s_{6} c_{345} + c_{2} c_{6} \\
+\\
+J[1,7] &= \left(\left(\left(s_{1} s_{345} + c_{1} c_{2} c_{345}\right) c_{6} + s_{2} s_{6} c_{1}\right) c_{7} - \left(s_{1} c_{345} - s_{345} c_{1} c_{2}\right) s_{7}\right) \\
+       &\phantom{=}  \left(a_{3} s_{6} c_{45} + a_{4} s_{6} c_{5} + d_{1} s_{2} s_{6} c_{345} + d_{1} c_{2} c_{6} + d_{2} s_{6} s_{345} - d_{3} c_{6} + d_{7}\right) \\
+       &\phantom{=}- \left(\left(s_{1} s_{345} + c_{1} c_{2} c_{345}\right) s_{6} - s_{2} c_{1} c_{6}\right) (a_{3} s_{7} s_{45} + a_{3} c_{6} c_{7} c_{45} + a_{4} s_{5} s_{7} + a_{4} c_{5} c_{6} c_{7} \\
+       &\phantom{=}+ d_{1} s_{2} s_{7} s_{345} + d_{1} s_{2} c_{6} c_{7} c_{345}- d_{1} s_{6} c_{2} c_{7} - d_{2} s_{7} c_{345} + d_{2} s_{345} c_{6} c_{7} + d_{3} s_{6} c_{7} + d_{6} s_{7}) \\
+J[2,7] &= \left(\left(\left(s_{1} c_{2} c_{345} - s_{345} c_{1}\right) c_{6} + s_{1} s_{2} s_{6}\right) c_{7} + \left(s_{1} s_{345} c_{2} + c_{1} c_{345}\right) s_{7}\right) \\
+       &\phantom{=}  \left(a_{3} s_{6} c_{45} + a_{4} s_{6} c_{5} + d_{1} s_{2} s_{6} c_{345} + d_{1} c_{2} c_{6} + d_{2} s_{6} s_{345} - d_{3} c_{6} + d_{7}\right) \\
+       &\phantom{=}- \left(\left(s_{1} c_{2} c_{345} - s_{345} c_{1}\right) s_{6} - s_{1} s_{2} c_{6}\right) (a_{3} s_{7} s_{45} + a_{3} c_{6} c_{7} c_{45} + a_{4} s_{5} s_{7} + a_{4} c_{5} c_{6} c_{7} \\
+       &\phantom{=}+ d_{1} s_{2} s_{7} s_{345} + d_{1} s_{2} c_{6} c_{7} c_{345}- d_{1} s_{6} c_{2} c_{7} - d_{2} s_{7} c_{345} + d_{2} s_{345} c_{6} c_{7} + d_{3} s_{6} c_{7} + d_{6} s_{7}) \\
+J[3,7] &= \left(\left(s_{2} c_{6} c_{345} - s_{6} c_{2}\right) c_{7} + s_{2} s_{7} s_{345}\right) \\
+       &\phantom{=} \left(a_{3} s_{6} c_{45} + a_{4} s_{6} c_{5} + d_{1} s_{2} s_{6} c_{345} + d_{1} c_{2} c_{6} + d_{2} s_{6} s_{345} - d_{3} c_{6} + d_{7}\right) \\
+       &\phantom{=}- \left(s_{2} s_{6} c_{345} + c_{2} c_{6}\right) (a_{3} s_{7} s_{45} + a_{3} c_{6} c_{7} c_{45} + a_{4} s_{5} s_{7} + a_{4} c_{5} c_{6} c_{7} \\
+       &\phantom{=}+ d_{1} s_{2} s_{7} s_{345} + d_{1} s_{2} c_{6} c_{7} c_{345} - d_{1} s_{6} c_{2} c_{7} - d_{2} s_{7} c_{345} + d_{2} s_{345} c_{6} c_{7} + d_{3} s_{6} c_{7} + d_{6} s_{7}) \\
+J[4,7] &= s_{1} s_{7} s_{345} c_{6} + s_{1} c_{7} c_{345} + s_{2} s_{6} s_{7} c_{1} + s_{7} c_{1} c_{2} c_{6} c_{345} - s_{345} c_{1} c_{2} c_{7} \\
+J[5,7] &= s_{1} s_{2} s_{6} s_{7} + s_{1} s_{7} c_{2} c_{6} c_{345} - s_{1} s_{345} c_{2} c_{7} - s_{7} s_{345} c_{1} c_{6} - c_{1} c_{7} c_{345} \\
+J[6,7] &= s_{2} s_{7} c_{6} c_{345} - s_{2} s_{345} c_{7} - s_{6} s_{7} c_{2}
 \end{align*}
 
+For practical parameters, the link length and offset values can be set to
+\begin{align*}
+&a_{30} = 2.30, a_{40} = 2.30, d_{10} = 0.65, d_{20} = 0.30 \\
+&d_{30} = 0.90, d_{60} = 0.30, d_{70} = 0.65
+\end{align*}
 
-% \begin{align*}
-% D_0 &= \left[\begin{matrix}0 & 0 & - c_{1} & d_{1} c_{1}\\0 & 0 & - s_{1} & d_{1} s_{1}\\c_{1} & s_{1} & 0 & 0\\0 & 0 & 0 & 0\end{matrix}\right] \\
-% D_1 &= \left[\begin{matrix}0 & c_{2} & s_{1} s_{2} & - d_{1} s_{1} s_{2} + d_{2} c_{1} c_{2}\\- c_{2} & 0 & - s_{2} c_{1} & d_{1} s_{2} c_{1} + d_{2} s_{1} c_{2}\\- s_{1} s_{2} & s_{2} c_{1} & 0 & d_{2} s_{2}\\0 & 0 & 0 & 0\end{matrix}\right] \\
-% D_2 &= \left[\begin{matrix}0 & c_{2} & s_{1} s_{2} & - a_{3} s_{1} c_{3} + a_{3} s_{3} c_{1} c_{2} - d_{1} s_{1} s_{2} + d_{2} c_{1} c_{2}\\- c_{2} & 0 & - s_{2} c_{1} & a_{3} s_{1} s_{3} c_{2} + a_{3} c_{1} c_{3} + d_{1} s_{2} c_{1} + d_{2} s_{1} c_{2}\\- s_{1} s_{2} & s_{2} c_{1} & 0 & \left(a_{3} s_{3} + d_{2}\right) s_{2}\\0 & 0 & 0 & 0\end{matrix}\right] \\
-% D_3 &= \left[\begin{matrix}0 & c_{2} & s_{1} s_{2} & - a_{3} s_{1} c_{3} + a_{3} s_{3} c_{1} c_{2} - a_{4} s_{1} c_{34} + a_{4} s_{34} c_{1} c_{2} - d_{1} s_{1} s_{2} + d_{2} c_{1} c_{2}\\- c_{2} & 0 & - s_{2} c_{1} & a_{3} s_{1} s_{3} c_{2} + a_{3} c_{1} c_{3} + a_{4} s_{1} s_{34} c_{2} + a_{4} c_{1} c_{34} + d_{1} s_{2} c_{1} + d_{2} s_{1} c_{2}\\- s_{1} s_{2} & s_{2} c_{1} & 0 & \left(a_{3} s_{3} + a_{4} s_{34} + d_{2}\right) s_{2}\\0 & 0 & 0 & 0\end{matrix}\right] \\
-% \end{align*}
+\subsection{Velocity Equation}
+I should write this?
+
+\section{Conclusions}
 
 \nocite{*}
-\bibliography{bib} 
+\bibliography{bib}
 \bibliographystyle{alpha}
 
 \end{document}
