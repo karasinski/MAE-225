@@ -58,7 +58,7 @@ z = Matrix([[0], [0], [1]])
 for i, _ in enumerate(T):
     rot = Identity(3)
     for j in range(i):
-        rot *= T[j].R 
+        rot *= T[j].R
     T[i].z = rot * z
 
 # Loop through backwards to calculate the r vectors
@@ -91,7 +91,7 @@ J = top.col_join(bottom)
 
 # T07 = T[0].A * T[1].A * T[2].A * T[3].A * T[4].A * T[5].A * T[6].A
 
-# We know that 
+# We know that
 n_x, n_y, n_z, o_x, o_y, o_z, a_x, a_y, a_z, p_x, p_y, p_z = symbols('n_x n_y n_z o_x o_y o_z a_x a_y a_z p_x p_y p_z')
 T07 = Matrix([[n_x, o_x, a_x, p_x],
               [n_y, o_y, a_y, p_y],
@@ -126,3 +126,38 @@ for i in range(7):
   print(latex(simplify(T[i].D[0, 2])))
   print(latex(simplify(T[i].D[1, 0])))
   print('\n')
+
+SHOULDER, WRIST, ELBOW = 1, 1, 1
+
+theta1 = beta
+
+h1 = (-o_z * d7 - d1 + p_z)
+q1 = ((o_x * d7 - p_x)*cos(beta) + (o_y * d7 - p_y)*sin(beta))
+
+theta2 = SHOULDER * acos(d3/(sqrt(h1**2 + q1**2))) + atan2(q1, h1)
+
+theta6 = WRIST * acos(o_z*cos(theta2)-(o_x*cos(theta1) + o_y*sin(theta1))*sin(theta2))
+
+theta7 = atan2(((n_x*cos(theta1) + n_y*sin(theta1))*sin(theta2) - n_z*cos(theta2))/sin(theta6),
+                  ((a_x*cos(theta1) + a_y*sin(theta1))*sin(theta2) - a_z*cos(theta2))/sin(theta6))
+
+X = -d7 * (o_z*sin(theta2)+cos(theta2)*(o_x*cos(theta1)+o_y*sin(theta1)))+(-d1+p_z)*sin(theta2)+cos(theta2)*(p_x*cos(theta1)+p_y*sin(theta1))
+Y = -d2 * d6 * (a_x*sin(theta1)-a_y*cos(theta1)) - d6*(n_x*sin(theta1)-n_y*cos(theta1))*sin(theta7) - d7*(o_x*sin(theta1)-o_y*cos(theta1)) + p_x*sin(theta1)-p_y*cos(theta1)
+
+theta4 = ELBOW * acos((X**2 + Y**2 - a3**2 - a4**2)/(2*a3*a4))
+
+theta3 = atan2(Y*(a3 + a4*cos(theta4)) - X*a4*sin(theta4),
+               X*(a3 + a4*cos(theta4)) + Y*a4*sin(theta4))
+
+theta5 = atan2((a_x*sin(theta1)-a_y*cos(theta1))*cos(theta7)-(n_x*sin(theta1)-n_y*cos(theta1))*sin(theta7),
+               (o_x*sin(theta1)-o_y*cos(theta1))/(sin(theta6))) - (theta3 + theta4)
+
+params = {a3:2.3, a4:2.3, d1:0.65, d2:0.3,d3:0.9,d6:0.3,d7:0.65, beta: rad(60), o_x: 0.1217, p_x: 2.4790, o_y: 0.3495, p_y: -2.4734, o_z: -0.9290, p_z: -0.4927, n_x: 0.8021, n_y: -0.5859, n_z: -0.1154, a_x: 0.5846, a_y: 0.7311, a_z: 0.3517}
+
+t1e = 1.04719755119660
+t2e = 2.78783357921311
+t3e = 0.647418062415987
+t4e = 1.35058161602201
+t5e = -0.140025071653727
+t6e = 0.729453686436415
+

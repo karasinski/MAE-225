@@ -82,6 +82,7 @@ $i$ & $\theta_i$ & $\alpha_i$ & $a_i$ & $d_i$ \\
 \bottomrule
 \end{tabular}
 \caption{The Denavit-Hartenberg parameters for the SSRMS. These parameters are the joint angle, $\theta$, the link twist angle, $\alpha$, the link length, $a$, and the joint offset, $d$. These $\theta_i$s give the initial or ``zero-displacement" configuration, but each $\theta_i$ is modeled as an individual variable below.}
+\label{dhparams}
 \end{table}
 The resulting matrices are therefore
 \begin{align*}
@@ -101,27 +102,27 @@ T_{67} &=
 \left[\begin{matrix}\cos{\left (\theta_{7} \right )} & 0 & \sin{\left (\theta_{7} \right )} & 0\\\sin{\left (\theta_{7} \right )} & 0 & - \cos{\left (\theta_{7} \right )} & 0\\0 & 1 & 0 & d_{7}\\0 & 0 & 0 & 1\end{matrix}\right]
 \end{align*}
 And multiplying all of these together yields
-\begin{align*}
-T_{07} =& T_{01} T_{12} T_{23} T_{34} T_{45} T_{56} T_{67} \\
-T_{07}[1, 1] =& \left(- s_{1} c_{345} + s_{345} c_{1} c_{2}\right) s_{7} + \left(s_{1} s_{345} c_{6} + s_{2} s_{6} c_{1} + c_{1} c_{2} c_{6} c_{345}\right) c_{7} \\
-T_{07}[1, 2] =& s_{1} s_{6} s_{345} - s_{2} c_{1} c_{6} + s_{6} c_{1} c_{2} c_{345} \\
-T_{07}[1, 3] =& \left(s_{1} c_{345} - s_{345} c_{1} c_{2}\right) c_{7} + \left(s_{1} s_{345} c_{6} + s_{2} s_{6} c_{1} + c_{1} c_{2} c_{6} c_{345}\right) s_{7} \\
-T_{07}[1, 4] =& a_{3} s_{1} s_{3} + a_{3} c_{1} c_{2} c_{3} + a_{4} s_{1} s_{34} + a_{4} c_{1} c_{2} c_{34} + d_{2} s_{1} + d_{3} s_{2} c_{1} - d_{6} s_{1} c_{345} + d_{6} s_{345} c_{1} c_{2} \\
-              & + d_{7} s_{1} s_{6} s_{345} - d_{7} s_{2} c_{1} c_{6} + d_{7} s_{6} c_{1} c_{2} c_{345} \\
-T_{07}[2, 1] =& \left(s_{1} s_{345} c_{2} + c_{1} c_{345}\right) s_{7} + \left(s_{1} s_{2} s_{6} + s_{1} c_{2} c_{6} c_{345} - s_{345} c_{1} c_{6}\right) c_{7} \\
-T_{07}[2, 2] =& - s_{1} s_{2} c_{6} + s_{1} s_{6} c_{2} c_{345} - s_{6} s_{345} c_{1} \\
-T_{07}[2, 3] =& - \left(s_{1} s_{345} c_{2} + c_{1} c_{345}\right) c_{7} + \left(s_{1} s_{2} s_{6} + s_{1} c_{2} c_{6} c_{345} - s_{345} c_{1} c_{6}\right) s_{7} \\
-T_{07}[2, 4] =& a_{3} s_{1} c_{2} c_{3} - a_{3} s_{3} c_{1} + a_{4} s_{1} c_{2} c_{34} - a_{4} s_{34} c_{1} - d_{2} c_{1} + d_{3} s_{1} s_{2} + d_{6} s_{1} s_{345} c_{2} + d_{6} c_{1} c_{345} \\
-              & - d_{7} s_{1} s_{2} c_{6} + d_{7} s_{1} s_{6} c_{2} c_{345} - d_{7} s_{6} s_{345} c_{1} \\
-T_{07}[3, 1] =& \left(s_{2} c_{6} c_{345} - s_{6} c_{2}\right) c_{7} + s_{2} s_{7} s_{345} \\
-T_{07}[3, 2] =& s_{2} s_{6} c_{345} + c_{2} c_{6} \\
-T_{07}[3, 3] =& \left(s_{2} c_{6} c_{345} - s_{6} c_{2}\right) s_{7} - s_{2} s_{345} c_{7} \\
-T_{07}[3, 4] =& a_{3} s_{2} c_{3} + a_{4} s_{2} c_{34} + d_{1} - d_{3} c_{2} + d_{6} s_{2} s_{345} + d_{7} s_{2} s_{6} c_{345} + d_{7} c_{2} c_{6} \\
-T_{07}[4, 1] =& 0 \\
-T_{07}[4, 2] =& 0 \\
-T_{07}[4, 3] =& 0 \\
-T_{07}[4, 4] =& 1 \\
-\end{align*}
+\begin{align}
+T_{07} =& T_{01} T_{12} T_{23} T_{34} T_{45} T_{56} T_{67} \label{direct} \\
+T_{07}[1, 1] =& \left(- s_{1} c_{345} + s_{345} c_{1} c_{2}\right) s_{7} + \left(s_{1} s_{345} c_{6} + s_{2} s_{6} c_{1} + c_{1} c_{2} c_{6} c_{345}\right) c_{7} \nonumber \\
+T_{07}[1, 2] =& s_{1} s_{6} s_{345} - s_{2} c_{1} c_{6} + s_{6} c_{1} c_{2} c_{345} \nonumber \\
+T_{07}[1, 3] =& \left(s_{1} c_{345} - s_{345} c_{1} c_{2}\right) c_{7} + \left(s_{1} s_{345} c_{6} + s_{2} s_{6} c_{1} + c_{1} c_{2} c_{6} c_{345}\right) s_{7} \nonumber \\
+T_{07}[1, 4] =& a_{3} s_{1} s_{3} + a_{3} c_{1} c_{2} c_{3} + a_{4} s_{1} s_{34} + a_{4} c_{1} c_{2} c_{34} + d_{2} s_{1} + d_{3} s_{2} c_{1} - d_{6} s_{1} c_{345} + d_{6} s_{345} c_{1} c_{2} \nonumber \\
+              & + d_{7} s_{1} s_{6} s_{345} - d_{7} s_{2} c_{1} c_{6} + d_{7} s_{6} c_{1} c_{2} c_{345} \nonumber \\
+T_{07}[2, 1] =& \left(s_{1} s_{345} c_{2} + c_{1} c_{345}\right) s_{7} + \left(s_{1} s_{2} s_{6} + s_{1} c_{2} c_{6} c_{345} - s_{345} c_{1} c_{6}\right) c_{7} \nonumber \\
+T_{07}[2, 2] =& - s_{1} s_{2} c_{6} + s_{1} s_{6} c_{2} c_{345} - s_{6} s_{345} c_{1} \nonumber \\
+T_{07}[2, 3] =& - \left(s_{1} s_{345} c_{2} + c_{1} c_{345}\right) c_{7} + \left(s_{1} s_{2} s_{6} + s_{1} c_{2} c_{6} c_{345} - s_{345} c_{1} c_{6}\right) s_{7} \nonumber \\
+T_{07}[2, 4] =& a_{3} s_{1} c_{2} c_{3} - a_{3} s_{3} c_{1} + a_{4} s_{1} c_{2} c_{34} - a_{4} s_{34} c_{1} - d_{2} c_{1} + d_{3} s_{1} s_{2} + d_{6} s_{1} s_{345} c_{2} + d_{6} c_{1} c_{345} \nonumber \\
+              & - d_{7} s_{1} s_{2} c_{6} + d_{7} s_{1} s_{6} c_{2} c_{345} - d_{7} s_{6} s_{345} c_{1} \nonumber \\
+T_{07}[3, 1] =& \left(s_{2} c_{6} c_{345} - s_{6} c_{2}\right) c_{7} + s_{2} s_{7} s_{345} \nonumber \\
+T_{07}[3, 2] =& s_{2} s_{6} c_{345} + c_{2} c_{6} \nonumber \\
+T_{07}[3, 3] =& \left(s_{2} c_{6} c_{345} - s_{6} c_{2}\right) s_{7} - s_{2} s_{345} c_{7} \nonumber \\
+T_{07}[3, 4] =& a_{3} s_{2} c_{3} + a_{4} s_{2} c_{34} + d_{1} - d_{3} c_{2} + d_{6} s_{2} s_{345} + d_{7} s_{2} s_{6} c_{345} + d_{7} c_{2} c_{6} \nonumber \\
+T_{07}[4, 1] =& 0 \nonumber \\
+T_{07}[4, 2] =& 0 \nonumber \\
+T_{07}[4, 3] =& 0 \nonumber \\
+T_{07}[4, 4] =& 1 \nonumber
+\end{align}
 
 \subsection{Joint/Shape Matrices}
 We can similarly use joint and shape matrices to arrive at these $T$ matrices. All of the joints of the SSRMS are revolute, and can be modeled with the joint matrix of
@@ -153,7 +154,7 @@ T_{01} & =
  0 & 0 & 1 & z_0 \\
  0 & 0 & 0 & 1 \\
 \end{bmatrix*}, \\
-S_{1A} &= I, 
+S_{1A} &= I,
 S_{2A} =
 \begin{bmatrix*}[c]
 1 & 0 & 0 & 0 \\
@@ -161,48 +162,48 @@ S_{2A} =
 0 & -1 & 0 & 0 \\
 0 & 0 & 0 & 1 \\
 \end{bmatrix*}, \\
-S_{2B} &= I, 
-S_{3B} = 
+S_{2B} &= I,
+S_{3B} =
 \begin{bmatrix*}[c]
 1 & 0 & 0 & 0 \\
 0 & 0 & 1 & -d_2 \\
 0 & -1 & 0 & 0 \\
 0 & 0 & 0 & 1 \\
 \end{bmatrix*}, \\
-S_{3C} &= I, 
-S_{4C} = 
+S_{3C} &= I,
+S_{4C} =
 \begin{bmatrix*}[c]
 1 & 0 & 0 & -a_3 \\
 0 & 0 & 1 & -d_3 \\
 0 & 1 & 0 & 0 \\
 0 & 0 & 0 & 1 \\
 \end{bmatrix*}, \\
-S_{4D} &= I, 
-S_{5D} = 
+S_{4D} &= I,
+S_{5D} =
 \begin{bmatrix*}[c]
 1 & 0 & 0 & -a_3 \\
 0 & 0 & 1 & 0 \\
 0 & 1 & 0 & 0 \\
 0 & 0 & 0 & 1 \\
 \end{bmatrix*}, \\
-S_{5E} &= I, 
-S_{6E} = 
+S_{5E} &= I,
+S_{6E} =
 \begin{bmatrix*}[c]
 1 & 0 & 0 & 0 \\
 0 & 0 & 1 & 0 \\
 0 & -1 & 0 & 0 \\
 0 & 0 & 0 & 1 \\
 \end{bmatrix*}, \\
-S_{6F} &= I, 
-S_{7F} = 
+S_{6F} &= I,
+S_{7F} =
 \begin{bmatrix*}[c]
 1 & 0 & 0 & 0 \\
 0 & 0 & 1 & -d_6 \\
 0 & -1 & 0 & 0 \\
 0 & 0 & 0 & 1 \\
-\end{bmatrix*}, \\ 
-S_{7G} &= I, 
-S_{8G} = 
+\end{bmatrix*}, \\
+S_{7G} &= I,
+S_{8G} =
 \begin{bmatrix*}[c]
 1 & 0 & 0 & 0 \\
 0 & 0 & 1 & -d_7 \\
@@ -291,9 +292,12 @@ With the shoulder and wrist joints resolved, we can now solve for the middle joi
 \end{align*}
 Taking the left and right hand side $\left(1, 4\right)$ and $\left(2, 4 \right)$ elements from the resulting matrix yields
 \begin{align}
-a_{3} c_{3} + a_{4} c_{34} &= d_{6} \left(a_{z} s_{2} + c_{2}\left(a_{x} c_{1} + a_{y} s_{1}\right) \right) c_{7} - d_{6} \left(n_{z} s_{2} + c_{2}\left(n_{x} c_{1} - n_{y} c_{1} \right) \right) s_{7}  \nonumber \\
-                           &\phantom{=} - d_{7} \left(o_{z} s_{2} + c_{2}\left(o_{x} c_{1} + o_{y} s_{1} \right) \right) + \left(- d_{1} + p_{z}\right) s_{2} + c_{2}\left(p_{x} c_{1} + p_{y} s_{1}\right) \label{mj1} \\
-a_{3} s_{3} + a_{4} s_{34} &= - d_{2} + d_{6} \left(a_{x} s_{1} - a_{y} c_{1}\right) c_{7} - d_{6} \left(n_{x} s_{1} - n_{y} c_{1}\right) s_{7} - d_{7} \left(o_{x} s_{1} - o_{y} c_{1}\right) + p_{x} s_{1} - p_{y} c_{1} \label{mj2}
+a_{3} c_{3} + a_{4} c_{34} &= d_{6} \left(a_{z} s_{2} + c_{2}\left(a_{x} c_{1} + a_{y} s_{1}\right) \right) c_{7} \nonumber \\
+                           &\phantom{=} - d_{6} \left(n_{z} s_{2} + c_{2}\left(n_{x} c_{1} - n_{y} c_{1} \right) \right) s_{7}  \nonumber \\
+                           &\phantom{=} - d_{7} \left(o_{z} s_{2} + c_{2}\left(o_{x} c_{1} + o_{y} s_{1} \right) \right) \nonumber \\
+                           &\phantom{=}+ \left(- d_{1} + p_{z}\right) s_{2} + c_{2}\left(p_{x} c_{1} + p_{y} s_{1}\right) \label{mj1} \\
+a_{3} s_{3} + a_{4} s_{34} &= - d_{2} + d_{6} \left(a_{x} s_{1} - a_{y} c_{1}\right) c_{7} - d_{6} \left(n_{x} s_{1} - n_{y} c_{1}\right) s_{7} \nonumber \\
+                           &\phantom{=} - d_{7} \left(o_{x} s_{1} - o_{y} c_{1}\right) + p_{x} s_{1} - p_{y} c_{1} \label{mj2}
 \end{align}
 $\theta_4$ is then solved by combining the above two equations, resulting in
 \begin{align}
@@ -306,15 +310,15 @@ Y &= - d_{2} + d_{6} \left(a_{x} s_{1} - a_{y} c_{1}\right) c_{7} - d_{6} \left(
 \end{align*}
 Substituting the solution into $\theta_4$ and Equations~\ref{mj1} and~\ref{mj2} and combining yields
 \begin{align*}
-\theta_3 = \atantwo \left(Y \left( a_3 + a_4 c_4 \right) c_7 - X a_4 s_4, X \left(a_3 + a_4 c_4 \right) + Y a_4 s_4 \right)
+\boxed{\theta_3 = \atantwo \left(Y \left( a_3 + a_4 c_4 \right) - X a_4 s_4, X \left(a_3 + a_4 c_4 \right) + Y a_4 s_4 \right)}
 \end{align*}
-Subtracting $(\ref{th52}) c_7$ and $\ref{th51} s_7$ yields
+Subtracting $(Eq.~\ref{th52}) c_7$ and $(Eq.~\ref{th51}) s_7$ yields
 \begin{align*}
 c_{345} &= \left(a_{x} s_1 - a_{y} c_1\right) c_7 - \left(n_{x} s_1 - n_{y} c_1 \right) s_7
 \end{align*}
 And from Equation~\ref{th53} we have
 \begin{align*}
-s_{345} = dfrac{o_{x} s_1 - o_{y} c_1 }{s_{6}}
+s_{345} = \dfrac{o_{x} s_1 - o_{y} c_1 }{s_{6}}
 \end{align*}
 which we can combine to solve for the last joint
 \begin{align*}
@@ -323,7 +327,22 @@ which we can combine to solve for the last joint
 \end{align*}
 
 \subsection{Numerical Example}
-Numerical example?
+% Tt.subs({theta1: rad(90), theta2: rad(90), theta3: 0, theta4: 0, theta5: rad(180), theta6: rad(-90), theta7: rad(180)}).subs({a3:2.3, a4:2.3, d1:0.65, d2:0.3,d3:0.9,d6:0.3,d7:0.65})
+For practical purposes, the link length and offset values can be set to
+\begin{align*}
+&a_{3} = 2.30, a_{4} = 2.30, d_{1} = 0.65, d_{2} = 0.30 \\
+&d_{3} = 0.90, d_{6} = 0.30, d_{7} = 0.65
+\end{align*}
+As an example, plugging in these values and the initial angles given in Table~\ref{dhparams} into Equation~\ref{direct} yields
+\begin{align*}
+T_{07} &=
+\left[\begin{matrix}
+0 & 0 & 1 & 0.6 \\
+1 & 0 & 0 & 0.9 \\
+0 & 1 & 0 & 5.9 \\
+0 & 0 & 0 &   1 \\
+\end{matrix}\right] \\
+\end{align*}
 
 \section{Differential Kinematic Analysis}
 \subsection{Method 1: Kinematic Jacobian}
@@ -336,7 +355,7 @@ T_{1i} &=
   & \hdots   &   &        & \hdots \\
 0 &        0 & 0 & \vdots & 0
 \end{matrix}\right] \\
-\du{\Theta}_i &= 
+\du{\Theta}_i &=
 \left[\begin{matrix}
 & & \\
 x_i & y_i & z_i \\
@@ -344,7 +363,7 @@ x_i & y_i & z_i \\
 \end{matrix}\right] \\
 \hat{z}_i &= \left( \prod_{i=1}^n \du{\Theta}_i \right) z_i
 \end{align*}
-and $\vec{r}_i$ is defined 
+and $\vec{r}_i$ is defined
 \begin{align*}
 \vec{r}_i = \sum_{i=1}^n \vec{a}_i
 \end{align*}
@@ -352,7 +371,7 @@ With these definitions, we can find the Jacobian via
 \begin{align*}
 \dot{\vec{P}} &= \sum_{i=1}^{n} \left( \hat{z}_i \times \vec{r}_i \right) \dot{\theta}_i \\
 \vec{w} &= \sum_{i=1}^{n} \dot{\theta}_i \hat{z}_i \\
-\du{J} \dot{q} &= 
+\du{J} \dot{q} &=
 \left[\begin{matrix}
 \underline{\dot{P}} \\
 \underline{\vec{w}}
@@ -367,7 +386,7 @@ With these definitions, we can find the Jacobian via
 \vdots \\
 \dot{\theta}_7 \\
 \end{matrix}\right]
-&= 
+&=
 \left[\begin{matrix}
 \underline{\dot{P}}_{EE} \\
 \underline{w}_{EE} \\
@@ -519,12 +538,6 @@ J[3,7] &= \left(\left(s_{2} c_{6} c_{345} - s_{6} c_{2}\right) c_{7} + s_{2} s_{
 J[4,7] &= s_{1} s_{7} s_{345} c_{6} + s_{1} c_{7} c_{345} + s_{2} s_{6} s_{7} c_{1} + s_{7} c_{1} c_{2} c_{6} c_{345} - s_{345} c_{1} c_{2} c_{7} \\
 J[5,7] &= s_{1} s_{2} s_{6} s_{7} + s_{1} s_{7} c_{2} c_{6} c_{345} - s_{1} s_{345} c_{2} c_{7} - s_{7} s_{345} c_{1} c_{6} - c_{1} c_{7} c_{345} \\
 J[6,7] &= s_{2} s_{7} c_{6} c_{345} - s_{2} s_{345} c_{7} - s_{6} s_{7} c_{2}
-\end{align*}
-
-For practical parameters, the link length and offset values can be set to
-\begin{align*}
-&a_{30} = 2.30, a_{40} = 2.30, d_{10} = 0.65, d_{20} = 0.30 \\
-&d_{30} = 0.90, d_{60} = 0.30, d_{70} = 0.65
 \end{align*}
 
 \subsection{Velocity Equation}
