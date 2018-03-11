@@ -293,7 +293,7 @@ With the shoulder and wrist joints resolved, we can now solve for the middle joi
 Taking the left and right hand side $\left(1, 4\right)$ and $\left(2, 4 \right)$ elements from the resulting matrix yields
 \begin{align}
 a_{3} c_{3} + a_{4} c_{34} &= d_{6} \left(a_{z} s_{2} + c_{2}\left(a_{x} c_{1} + a_{y} s_{1}\right) \right) c_{7} \nonumber \\
-                           &\phantom{=} - d_{6} \left(n_{z} s_{2} + c_{2}\left(n_{x} c_{1} - n_{y} c_{1} \right) \right) s_{7}  \nonumber \\
+                           &\phantom{=} - d_{6} \left(n_{z} s_{2} + c_{2}\left(n_{x} c_{1} + n_{y} s_{1} \right) \right) s_{7}  \nonumber \\
                            &\phantom{=} - d_{7} \left(o_{z} s_{2} + c_{2}\left(o_{x} c_{1} + o_{y} s_{1} \right) \right) \nonumber \\
                            &\phantom{=}+ \left(- d_{1} + p_{z}\right) s_{2} + c_{2}\left(p_{x} c_{1} + p_{y} s_{1}\right) \label{mj1} \\
 a_{3} s_{3} + a_{4} s_{34} &= - d_{2} + d_{6} \left(a_{x} s_{1} - a_{y} c_{1}\right) c_{7} - d_{6} \left(n_{x} s_{1} - n_{y} c_{1}\right) s_{7} \nonumber \\
@@ -305,7 +305,8 @@ $\theta_4$ is then solved by combining the above two equations, resulting in
 \end{align}
 where
 \begin{align*}
-X &= - d_{7} \left(o_{z} s_{2} + c_{2}\left(o_{x} c_{1} + o_{y} s_{1} \right) \right) + \left(- d_{1} + p_{z}\right) s_{2} + c_{2}\left(p_{x} c_{1} + p_{y} s_{1}\right) \\
+X &= d_{6} \left( \left(a_{z} s_{2} + c_{2}\left(a_{x} c_{1} + a_{y} s_{1}\right) \right) c_{7} - \left(n_{z} s_{2} + c_{2}\left(n_{x} c_{1} + n_{y} s_{1} \right) \right) s_{7} \right) \nonumber \\
+  &\phantom{=}- d_{7} \left(o_{z} s_{2} + c_{2}\left(o_{x} c_{1} + o_{y} s_{1} \right) \right) + \left(- d_{1} + p_{z}\right) s_{2} + c_{2}\left(p_{x} c_{1} + p_{y} s_{1}\right) \\
 Y &= - d_{2} + d_{6} \left(a_{x} s_{1} - a_{y} c_{1}\right) c_{7} - d_{6} \left(n_{x} s_{1} - n_{y} c_{1}\right) s_{7} - d_{7} \left(o_{x} s_{1} - o_{y} c_{1}\right) + p_{x} s_{1} - p_{y} c_{1}
 \end{align*}
 Substituting the solution into $\theta_4$ and Equations~\ref{mj1} and~\ref{mj2} and combining yields
@@ -343,6 +344,26 @@ T_{07} &=
 0 & 0 & 0 &   1 \\
 \end{matrix}\right] \\
 \end{align*}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{*{7}{r}}
+\toprule
+$\theta_1$ & $\theta_2$ & $\theta_3$ & $\theta_4$ & $\theta_5$ & $\theta_6$ & $\theta_7$ \\
+\midrule
+60.000 &  -20.268   &  64.074 &   79.722 & -149.770 &  138.205 & -77.426 \\
+60.000 &  -20.268   &  58.153 &   99.444 &   16.428 & -138.205 & 102.573 \\
+60.000 &  -20.268   & 143.797 &  -79.722 &  -70.048 &  138.205 & -77.426 \\
+60.000 & -109.087   &  35.576 &   79.140 & -119.938 &   49.659 & -85.275 \\
+60.000 &  -20.268   & 157.598 &  -99.444 &  115.872 & -138.205 & 102.573 \\
+60.000 & -109.087   &  23.189 &  100.025 &   51.565 &  -49.659 &  94.724 \\
+60.000 & -109.087   & 114.717 &  -79.140 &  -40.797 &   49.659 & -85.275 \\
+60.000 & -109.087   & 123.214 & -100.025 &  151.590 &  -49.659 &  94.724 \\
+\bottomrule
+\end{tabular}
+\caption{The eight possible configurations for locking the first joint.}
+% \label{dhparams}
+\end{table}
 
 \section{Differential Kinematic Analysis}
 \subsection{Method 1: Kinematic Jacobian}
