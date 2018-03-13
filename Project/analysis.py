@@ -109,9 +109,9 @@ Q_rev = Matrix([[0, -1, 0, 0],
 for i, _ in enumerate(T):
   print('i ', i)
   if i > 0:
-    T[i].Ti = T[i-1].Ti * T[i].A
+    T[i].Ti = T[i-1].Ti * T[i-1].A
   if i == 0:
-    T[i].Ti = T[i].A
+    T[i].Ti = Matrix(Identity(4))
   T[i].Ti.simplify()
 
   T[i].D = simplify(T[i].Ti * Q_rev) * simplify(T[i].Ti.inv())
