@@ -56,16 +56,50 @@
 
 \section{Introduction}
 
-\begin{figure}[h]
+\begin{figure}[b]
 \includegraphics[width=\textwidth]{ssrms.jpg}
+\caption{a. Render of the Space Station Remote Manipulator System (SSRMS). b. Image of the SSRMS grappling with a visiting vehicle.}
+\label{ssrms_image}
 \end{figure}
-\begin{figure}[h]
-\includegraphics[width=\textwidth]{dh.jpg}
-\end{figure}
-We're going to play with a shoulder roll locked SSRMS.
+
+The Space Station Remote Manipulator System (SSRMS) was designed and built to construct the International Space Station (ISS) and grapple with visiting space vehicles.
+The SSRMS is a seven degree of freedom (DoF) manipulator consisting entirely of revolute joints.
+The arm is symmetric, consisting of a 3DoF (roll, yaw, pitch) ``shoulder'', an "elbow" pitch joint, and a 3DoF (pitch, yaw, roll) ``wrist''.
+Due to this symmetric structure, the arm has the ability to ``walk'' along the station, greatly increasing it's available working space.
+The arm can lock the wrist to a grapple fixture, then disconnect the shoulder (which becomes the new wrist) to walk along the station.
+See Figure~\ref{ssrms_image}a for an example graphic of arm, and Figure~\ref{ssrms_image}b for a picture of the arm grappling a visiting vehicle.
+
+The SSRMS is operating from one of the two Robotic Work Stations (RWS) located in either the Cupola or the Destiny module on the ISS.
+While operating the arm from the RWS, astronauts commonly lock one of the shoulder joints, which allows for more predictable movement of the arm.
+The shoulder roll is the most commonly locked joint during training and operation of the arm~\cite{astro_emails}.
+For this reason, we will consider the shoulder roll joint (the first joint of the arm) to be locked at a fixed angle for the majority of this report.
 
 \section{Finite Kinematic Analysis}
 \subsection{Denavit-Hartenberg Parameters}
+\begin{figure}[b]
+\includegraphics[width=\textwidth]{dh.jpg}
+\caption{The Denavit-Hartenberg (D-H) parameters for the Space Station Remote Manipulator System (SSRMS).}
+\label{dh_params}
+\end{figure}
+
+The Denavit-Hartenberg parameters form a minimal representation of the kinematic structure of a robotic arm.
+These four parameters are the joint angle, $\theta$, the link twist angle, $\alpha$, the link length, $a$, and the joint offset, $d$.
+These parameters are identified by inspection, and are based off the coordinates from and lengths defined in Figure~\ref{dh_params}.
+The resulting D-H parameters are presented in Table~\ref{dhparams}.
+The parameters are plugged into the generic D-H transformation matrix, see Equation~\ref{dh_matrix}.
+This equation transforms positions and rotations from the $i^{th}$ to the $i+1^{th}$ coordinates frames.
+
+\begin{align}
+T_{i, i+1} &=
+\left[\begin{matrix}
+\cos{\left (\phi \right )} & - \sin{\left (\phi \right )} \cos{\left (\alpha \right )} & \sin{\left (\alpha \right )} \sin{\left (\phi \right )} & a \cos{\left (\phi \right )}\\
+\sin{\left (\phi \right )} & \cos{\left (\alpha \right )} \cos{\left (\phi \right )} & - \sin{\left (\alpha \right )} \cos{\left (\phi \right )} & a \sin{\left (\phi \right )}\\
+0 & \sin{\left (\alpha \right )} & \cos{\left (\alpha \right )} & d\\
+0 & 0 & 0 & 1
+\end{matrix}\right]
+\label{dh_matrix}
+\end{align}
+
 \begin{table}[h]
 \centering
 \begin{tabular}{c|*{4}{c}}
@@ -84,7 +118,8 @@ $i$ & $\theta_i$ & $\alpha_i$ & $a_i$ & $d_i$ \\
 \caption{The Denavit-Hartenberg parameters for the SSRMS. These parameters are the joint angle, $\theta$, the link twist angle, $\alpha$, the link length, $a$, and the joint offset, $d$. These $\theta_i$s give the initial or ``zero-displacement" configuration, but each $\theta_i$ is modeled as an individual variable below.}
 \label{dhparams}
 \end{table}
-The resulting matrices are therefore
+
+The resulting seven matrices are therefore
 \begin{align*}
 T_{01} &=
 \left[\begin{matrix}\cos{\left (\theta_{1} \right )} & 0 & \sin{\left (\theta_{1} \right )} & 0\\\sin{\left (\theta_{1} \right )} & 0 & - \cos{\left (\theta_{1} \right )} & 0\\0 & 1 & 0 & d_{1}\\0 & 0 & 0 & 1\end{matrix}\right]
@@ -101,7 +136,10 @@ T_{45} &=
 T_{67} &=
 \left[\begin{matrix}\cos{\left (\theta_{7} \right )} & 0 & \sin{\left (\theta_{7} \right )} & 0\\\sin{\left (\theta_{7} \right )} & 0 & - \cos{\left (\theta_{7} \right )} & 0\\0 & 1 & 0 & d_{7}\\0 & 0 & 0 & 1\end{matrix}\right]
 \end{align*}
-And multiplying all of these together yields
+
+Once these seven matrices are defined, it is often desirable to be able to translate directly from the initial coordinate frame to the final end effector frame.
+This is easily found by multiplying the successive matrices together to form $T_{07}$, see Equation~\ref{direct}.
+Multiplying these matrices together yields
 \begin{align}
 T_{07} =& T_{01} T_{12} T_{23} T_{34} T_{45} T_{56} T_{67} \label{direct} \\
 T_{07}[1, 1] =& \left(- s_{1} c_{345} + s_{345} c_{1} c_{2}\right) s_{7} + \left(s_{1} s_{345} c_{6} + s_{2} s_{6} c_{1} + c_{1} c_{2} c_{6} c_{345}\right) c_{7} \nonumber \\
@@ -125,7 +163,10 @@ T_{07}[4, 4] =& 1 \nonumber
 \end{align}
 
 \subsection{Joint/Shape Matrices}
-We can similarly use joint and shape matrices to arrive at these $T$ matrices. All of the joints of the SSRMS are revolute, and can be modeled with the joint matrix of
+We can similarly use joint and shape matrices to arrive at these $T$ matrices.
+For simplicity of readability, we renumber the joints from $1-7$ to $A-G$.
+All of the joints of the SSRMS are revolute.
+A general revolute joint, $h$, can be modeled with the joint matrix of
 \begin{align*}
 \Phi_h \left( \phi_h \right) =
 \left[\begin{matrix}
@@ -136,25 +177,25 @@ We can similarly use joint and shape matrices to arrive at these $T$ matrices. A
 \end{matrix}\right]
 \end{align*}
 \begin{align*}
-T_{i,i+1} &= S_{i, j} \Phi_j S_{i+1,j}^{-1} \\
-T_{12} &= S_{1A} \Phi_A S_{2A}^{-1} \\
-T_{23} &= S_{2B} \Phi_B S_{3B}^{-1} \\
-T_{34} &= S_{3C} \Phi_C S_{4C}^{-1} \\
-T_{45} &= S_{4D} \Phi_D S_{5D}^{-1} \\
-T_{56} &= S_{5E} \Phi_E S_{6E}^{-1} \\
-T_{67} &= S_{6F} \Phi_F S_{7F}^{-1} \\
-T_{78} &= S_{7G} \Phi_G S_{8G}^{-1} \\
+T_{i,i+1} &= S_{i, j} J_j S_{i+1,j}^{-1} \\
+T_{12} &= S_{1A} J_A S_{2A}^{-1} \\
+T_{23} &= S_{2B} J_B S_{3B}^{-1} \\
+T_{34} &= S_{3C} J_C S_{4C}^{-1} \\
+T_{45} &= S_{4D} J_D S_{5D}^{-1} \\
+T_{56} &= S_{5E} J_E S_{6E}^{-1} \\
+T_{67} &= S_{6F} J_F S_{7F}^{-1} \\
+T_{78} &= S_{7G} J_G S_{8G}^{-1} \\
 \end{align*}
-For joints $\Phi_A, \Phi_B, \Phi_C, \Phi_D, \Phi_E, \Phi_F,$ and $\Phi_G$, we also define two shape matrices.
+For joints $J_A, J_B, J_C, J_D, J_E, J_F,$ and $J_G$, we also define two shape matrices.
 \begin{align*}
-T_{01} & =
+T_{01} &=
 \begin{bmatrix*}[c]
  1 & 0 & 0 & x_0 \\
  0 & 1 & 0 & y_0 \\
  0 & 0 & 1 & z_0 \\
  0 & 0 & 0 & 1 \\
-\end{bmatrix*}, \\
-S_{1A} &= I,
+\end{bmatrix*},
+&& S_{1A} = I,
 S_{2A} =
 \begin{bmatrix*}[c]
 1 & 0 & 0 & 0 \\
@@ -169,8 +210,8 @@ S_{3B} =
 0 & 0 & 1 & -d_2 \\
 0 & -1 & 0 & 0 \\
 0 & 0 & 0 & 1 \\
-\end{bmatrix*}, \\
-S_{3C} &= I,
+\end{bmatrix*},
+&& S_{3C} = I,
 S_{4C} =
 \begin{bmatrix*}[c]
 1 & 0 & 0 & -a_3 \\
@@ -185,8 +226,8 @@ S_{5D} =
 0 & 0 & 1 & 0 \\
 0 & 1 & 0 & 0 \\
 0 & 0 & 0 & 1 \\
-\end{bmatrix*}, \\
-S_{5E} &= I,
+\end{bmatrix*},
+&& S_{5E} = I,
 S_{6E} =
 \begin{bmatrix*}[c]
 1 & 0 & 0 & 0 \\
@@ -201,8 +242,8 @@ S_{7F} =
 0 & 0 & 1 & -d_6 \\
 0 & -1 & 0 & 0 \\
 0 & 0 & 0 & 1 \\
-\end{bmatrix*}, \\
-S_{7G} &= I,
+\end{bmatrix*},
+&& S_{7G} = I,
 S_{8G} =
 \begin{bmatrix*}[c]
 1 & 0 & 0 & 0 \\
@@ -344,7 +385,17 @@ T_{07} &=
 0 & 0 & 0 &   1 \\
 \end{matrix}\right] \\
 \end{align*}
-
+As another example, given the end effector pose
+\begin{align*}
+T_{07} &=
+\left[\begin{matrix}
+0.8021 & 0.1217 & 0.5846 & 2.4790 \\
+-0.5859 & 0.3495 & 0.7311 & -2.4734 \\
+-0.1154 & 0.9290 & 0.3517 & -0.4927 \\
+0 & 0 & 0 & 1
+\end{matrix}\right] \\
+\end{align*}
+and locking the first joint variable $\theta_1 = \beta = 60^\circ$, we can solve for the 8 possible configurations of the arm
 \begin{table}[h]
 \centering
 \begin{tabular}{*{7}{r}}
@@ -367,7 +418,6 @@ $\theta_1$ & $\theta_2$ & $\theta_3$ & $\theta_4$ & $\theta_5$ & $\theta_6$ & $\
 
 \section{Differential Kinematic Analysis}
 \subsection{Method 1: Kinematic Jacobian}
-
 Where $\hat{z}_i$ is taken from the last column of $T_{1i}$, and can be defined
 \begin{align*}
 T_{1i} &=
@@ -553,7 +603,6 @@ J[5,7] &= - s_{1} s_{2} c_{6} + s_{1} s_{6} c_{2} c_{345} - s_{6} s_{345} c_{1} 
 J[6,7] &= s_{2} s_{6} c_{345} + c_{2} c_{6} \\
 \end{align*}
 
-
 \subsection{Velocity Equation}
 I should write this?
 
@@ -561,6 +610,6 @@ I should write this?
 
 \nocite{*}
 \bibliography{bib}
-\bibliographystyle{alpha}
+\bibliographystyle{abbrv}
 
 \end{document}

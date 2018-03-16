@@ -26,8 +26,8 @@ class Transform:
         self.vecA = dh[:3, 3]
 
 # Let's do an analysis with the SSRMS with the shoulder roll joint locked at an angle beta
-beta, theta1, theta2, theta3, theta4, theta5, theta6, theta7 = symbols("beta theta1 theta2 theta3 theta4 theta5 theta6 theta7", real=True)
-d1, d2, d3, d6, d7, a3, a4 = symbols('d1 d2 d3 d6 d7 a3 a4', positive=True)
+beta, theta1, theta2, theta3, theta4, theta5, theta6, theta7 = symbols("beta theta1 theta2 theta3 theta4 theta5 theta6 theta7")
+d1, d2, d3, d6, d7, a3, a4 = symbols('d1 d2 d3 d6 d7 a3 a4')
 
 # SSRMS
 configs = [[theta1, 90,  0, d1],
@@ -51,6 +51,7 @@ T = []
 for config in configs:
     T.append(Transform(*config))
 
+# Kinematic Jacobian
 # The z_i's need to be WRT the base coordinate system
 z = Matrix([[0], [0], [1]])
 
@@ -86,21 +87,7 @@ for i, _ in enumerate(T):
     bottom = bottom.row_join(T[i].z)
 J = top.col_join(bottom)
 
-# Assume that beta is set to zero
-# J0 = J.subs({beta: 0})
-
-# T07 = T[0].A * T[1].A * T[2].A * T[3].A * T[4].A * T[5].A * T[6].A
-
-# We know that
-n_x, n_y, n_z, o_x, o_y, o_z, a_x, a_y, a_z, p_x, p_y, p_z = symbols('n_x n_y n_z o_x o_y o_z a_x a_y a_z p_x p_y p_z')
-T07 = Matrix([[n_x, o_x, a_x, p_x],
-              [n_y, o_y, a_y, p_y],
-              [n_z, o_z, a_z, p_z],
-              [  0,   0,   0,   1]])
-
-# And setting T01^-1 * T07 = T12 T23 T34 T45 T56 T67
-# print(latex(T[0].A.inv() * T07))
-
+# Geometric Jacobian
 Q_rev = Matrix([[0, -1, 0, 0],
                 [1,  0, 0, 0],
                 [0,  0, 0, 0],
@@ -115,18 +102,27 @@ for i, _ in enumerate(T):
   T[i].Ti.simplify()
 
   T[i].D = simplify(T[i].Ti * Q_rev) * simplify(T[i].Ti.inv())
-  # print(latex(Di))
 
-for i in range(7):
-  print('i ', i)
-  print(latex(simplify(T[i].D[0, 3])))
-  print(latex(simplify(T[i].D[1, 3])))
-  print(latex(simplify(T[i].D[2, 3])))
-  print(latex(simplify(T[i].D[2, 1])))
-  print(latex(simplify(T[i].D[0, 2])))
-  print(latex(simplify(T[i].D[1, 0])))
-  print('\n')
+Jg = Matrix([[T[0].D[0, 3], T[1].D[0, 3], T[2].D[0, 3], T[3].D[0, 3], T[4].D[0, 3], T[5].D[0, 3], T[6].D[0, 3]],
+             [T[0].D[1, 3], T[1].D[1, 3], T[2].D[1, 3], T[3].D[1, 3], T[4].D[1, 3], T[5].D[1, 3], T[6].D[1, 3]],
+             [T[0].D[2, 3], T[1].D[2, 3], T[2].D[2, 3], T[3].D[2, 3], T[4].D[2, 3], T[5].D[2, 3], T[6].D[2, 3]],
+             [T[0].D[2, 1], T[1].D[2, 1], T[2].D[2, 1], T[3].D[2, 1], T[4].D[2, 1], T[5].D[2, 1], T[6].D[2, 1]],
+             [T[0].D[0, 2], T[1].D[0, 2], T[2].D[0, 2], T[3].D[0, 2], T[4].D[0, 2], T[5].D[0, 2], T[6].D[0, 2]],
+             [T[0].D[1, 0], T[1].D[1, 0], T[2].D[1, 0], T[3].D[1, 0], T[4].D[1, 0], T[5].D[1, 0], T[6].D[1, 0]]])
 
+
+# Inverse Kinematic Solution
+# T07 = T[0].A * T[1].A * T[2].A * T[3].A * T[4].A * T[5].A * T[6].A
+
+# We know that
+# n_x, n_y, n_z, o_x, o_y, o_z, a_x, a_y, a_z, p_x, p_y, p_z = symbols('n_x n_y n_z o_x o_y o_z a_x a_y a_z p_x p_y p_z')
+# T07 = Matrix([[n_x, o_x, a_x, p_x],
+#               [n_y, o_y, a_y, p_y],
+#               [n_z, o_z, a_z, p_z],
+#               [  0,   0,   0,   1]])
+
+# And setting T01^-1 * T07 = T12 T23 T34 T45 T56 T67
+# print(latex(T[0].A.inv() * T07))
 
 def IK(SHOULDER=1, WRIST=1, ELBOW=1,
        a3=2.3, a4=2.3, d1=0.65, d2=0.3,
