@@ -1,5 +1,6 @@
 \documentclass{article}
 
+\usepackage[utf8]{inputenc}
 \usepackage{algpseudocode}
 \usepackage{amsfonts}
 \usepackage{amsmath}
@@ -46,8 +47,34 @@
 
 \def\du#1{\underline{\underline{#1}}}
 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
 \author{John Karasinski}
-\title{SSRMS}
+\title{Space Station Remote Manipulator System (SSRMS) Kinematics}
 
 \begin{document}
 \maketitle
@@ -56,9 +83,9 @@
 
 \section{Introduction}
 
-\begin{figure}[b]
+\begin{figure}[b!]
 \includegraphics[width=\textwidth]{ssrms.jpg}
-\caption{a. Render of the Space Station Remote Manipulator System (SSRMS). b. Image of the SSRMS grappling with a visiting vehicle.}
+\caption{Orbital ATK's Cygnus cargo spacecraft is captured using the Canadarm2 robotic arm on the International Space Station~\cite{ssrms_cc}.}
 \label{ssrms_image}
 \end{figure}
 
@@ -67,7 +94,7 @@ The SSRMS is a seven degree of freedom (DoF) manipulator consisting entirely of 
 The arm is symmetric, consisting of a 3DoF (roll, yaw, pitch) ``shoulder'', an "elbow" pitch joint, and a 3DoF (pitch, yaw, roll) ``wrist''.
 Due to this symmetric structure, the arm has the ability to ``walk'' along the station, greatly increasing it's available working space.
 The arm can lock the wrist to a grapple fixture, then disconnect the shoulder (which becomes the new wrist) to walk along the station.
-See Figure~\ref{ssrms_image}a for an example graphic of arm, and Figure~\ref{ssrms_image}b for a picture of the arm grappling a visiting vehicle.
+See Figure~\ref{ssrms_image} for a picture of the arm grappling a visiting Cygnus vehicle.
 
 The SSRMS is operating from one of the two Robotic Work Stations (RWS) located in either the Cupola or the Destiny module on the ISS.
 While operating the arm from the RWS, astronauts commonly lock one of the shoulder joints, which allows for more predictable movement of the arm.
@@ -76,25 +103,24 @@ For this reason, we will consider the shoulder roll joint (the first joint of th
 
 \section{Finite Kinematic Analysis}
 \subsection{Denavit-Hartenberg Parameters}
-\begin{figure}[b]
+\begin{figure}[b!]
 \includegraphics[width=\textwidth]{dh.jpg}
 \caption{The Denavit-Hartenberg (D-H) parameters for the Space Station Remote Manipulator System (SSRMS).}
 \label{dh_params}
 \end{figure}
 
-The Denavit-Hartenberg parameters form a minimal representation of the kinematic structure of a robotic arm.
+The Denavit-Hartenberg parameters form a minimal representation of a kinematic linkage of a robotic arm.
 These four parameters are the joint angle, $\theta$, the link twist angle, $\alpha$, the link length, $a$, and the joint offset, $d$.
 These parameters are identified by inspection, and are based off the coordinates from and lengths defined in Figure~\ref{dh_params}.
 The resulting D-H parameters are presented in Table~\ref{dhparams}.
 The parameters are plugged into the generic D-H transformation matrix, see Equation~\ref{dh_matrix}.
 This equation transforms positions and rotations from the $i^{th}$ to the $i+1^{th}$ coordinates frames.
-
 \begin{align}
 T_{i, i+1} &=
 \left[\begin{matrix}
-\cos{\left (\phi \right )} & - \sin{\left (\phi \right )} \cos{\left (\alpha \right )} & \sin{\left (\alpha \right )} \sin{\left (\phi \right )} & a \cos{\left (\phi \right )}\\
-\sin{\left (\phi \right )} & \cos{\left (\alpha \right )} \cos{\left (\phi \right )} & - \sin{\left (\alpha \right )} \cos{\left (\phi \right )} & a \sin{\left (\phi \right )}\\
-0 & \sin{\left (\alpha \right )} & \cos{\left (\alpha \right )} & d\\
+\cos{\left (\phi \right )} & - \cos{\left (\alpha \right )} \sin{\left (\phi \right )} &   \sin{\left (\alpha \right )} \sin{\left (\phi \right )} & a \cos{\left (\phi \right )}\\
+\sin{\left (\phi \right )} &   \cos{\left (\alpha \right )} \cos{\left (\phi \right )} & - \sin{\left (\alpha \right )} \cos{\left (\phi \right )} & a \sin{\left (\phi \right )}\\
+                         0 &   \sin{\left (\alpha \right )}                            &   \cos{\left (\alpha \right )} & d\\
 0 & 0 & 0 & 1
 \end{matrix}\right]
 \label{dh_matrix}
@@ -164,6 +190,7 @@ T_{07}[4, 4] =& 1 \nonumber
 
 \subsection{Joint/Shape Matrices}
 We can similarly use joint and shape matrices to arrive at these $T$ matrices.
+Shape matrices allow for a more general approach compared to D-H matrices, and ``avoid the difficulties that sometimes arise in the use of D-H matrices''~\cite{uicker2013matrix}.
 For simplicity of readability, we renumber the joints from $1-7$ to $A-G$.
 All of the joints of the SSRMS are revolute.
 A general revolute joint, $h$, can be modeled with the joint matrix of
@@ -252,10 +279,48 @@ S_{7G} =
 0 & 0 & 0 & 1 \\
 \end{bmatrix*}
 \end{align*}
-Multiplying out these shape and joint matrices according toe Equation~\ref{joint_eq} yields the same $T$ matrices as listed in the previous section.
+Multiplying out these shape and joint matrices according toe Equation~\ref{joint_eq} yields the same $T$ matrices as obtained using the Denavit-Hartenberg parameters.
 
-\subsection{Inverse Kinematics Solution}
-In general we can define
+\subsection{Inverse Kinematics}
+\subsubsection{Method}
+The SSRMS has eight solutions of joint angles for any such given pose~\cite{xu2014analytical}.
+In their 2014 paper, Xu et al. show how to to solve for these configurations using a series of flags labeled ``SHOULDER'', ``WRIST'', and ``ELBOW''.
+After locking the first rotary joint at a known angle, there are a pair of solutions for the second joint known as the ``SHOULDER'' configuration.
+With the first two joints known, it is then possible to solve for the final two joints, giving the ``WRIST'' configuration.
+Finally, the middle three joints can be solved for, giving the ``ELBOW'' configuration.
+
+This technique was inspired by a 1984 paper by Lee and Ziegler which used this geometric approach to solve for the inverse kinematics of PUMA robots~\cite{lee1984geometric}.
+In their paper, Lee and Ziegler define 4 ``indicators'' (``ARM'', ``ELBOW'', ``WRIST'', and `FLIP'') based off the geometric configuration of the PUMA robot.
+These indicators were used to provide consistent solutions for the PUMA robots during movement through their workspace.
+Lee and Ziegler presented an algorithmic approach which was programmed to show how their method could be used in practice.
+An example of two of these indicators in shown in Figure~\ref{puma}.
+
+For the SSRMS solution presented below, the SHOULDER, ELBOW, and WRIST configuration indicators take on the follow values~\cite{xu2014analytical}
+\begin{align*}
+\text{SHOULDER}&=\begin{cases}
+	+1, & \text{right shoulder}.\\
+	-1, & \text{left shoulder}.
+\end{cases}\\
+\text{ELBOW}&=\begin{cases}
+	+1, & \text{outside elbow}.\\
+	-1, & \text{inside elbow}.
+\end{cases}\\
+\text{WRIST}&=\begin{cases}
+	+1, & \text{wrist down}.\\
+	-1, & \text{wrist up}.
+\end{cases}
+\end{align*}
+
+\begin{figure}[b!]
+\begin{centering}
+\includegraphics[width=0.5\textwidth]{puma.jpg}
+\caption{Definition of two of the PUMA robotic arm configurations, taken from Lee and Ziegler~\cite{lee1984geometric}.}
+\label{puma}
+\end{centering}
+\end{figure}
+
+\subsubsection{SSRMS Solution}
+In general, for a known end effector pose, we can define~\cite{mae225_notes}
 \begin{align*}
 T_{07} &=
 \left[\begin{matrix}
@@ -399,21 +464,21 @@ T_{07} &=
 and locking the first joint variable $\theta_1 = \beta = 60^\circ$, we can solve for the 8 possible configurations of the arm
 \begin{table}[h]
 \centering
-\begin{tabular}{*{7}{r}}
+\begin{tabular}{*{10}{r}}
 \toprule
-$\theta_1$ & $\theta_2$ & $\theta_3$ & $\theta_4$ & $\theta_5$ & $\theta_6$ & $\theta_7$ \\
+S & E & W & $\theta_1$ & $\theta_2$ & $\theta_3$ & $\theta_4$ & $\theta_5$ & $\theta_6$ & $\theta_7$ \\
 \midrule
-60.000 &  -20.268   &  64.074 &   79.722 & -149.770 &  138.205 & -77.426 \\
-60.000 &  -20.268   &  58.153 &   99.444 &   16.428 & -138.205 & 102.573 \\
-60.000 &  -20.268   & 143.797 &  -79.722 &  -70.048 &  138.205 & -77.426 \\
-60.000 & -109.087   &  35.576 &   79.140 & -119.938 &   49.659 & -85.275 \\
-60.000 &  -20.268   & 157.598 &  -99.444 &  115.872 & -138.205 & 102.573 \\
-60.000 & -109.087   &  23.189 &  100.025 &   51.565 &  -49.659 &  94.724 \\
-60.000 & -109.087   & 114.717 &  -79.140 &  -40.797 &   49.659 & -85.275 \\
-60.000 & -109.087   & 123.214 & -100.025 &  151.590 &  -49.659 &  94.724 \\
+ 1 &  1 &  1 & 60.000 &  -20.268   &  64.074 &   79.722 & -149.770 &  138.205 & -77.426 \\
+ 1 &  1 & -1 & 60.000 &  -20.268   &  58.153 &   99.444 &   16.428 & -138.205 & 102.573 \\
+ 1 & -1 &  1 & 60.000 &  -20.268   & 143.797 &  -79.722 &  -70.048 &  138.205 & -77.426 \\
+-1 &  1 &  1 & 60.000 & -109.087   &  35.576 &   79.140 & -119.938 &   49.659 & -85.275 \\
+ 1 & -1 & -1 & 60.000 &  -20.268   & 157.598 &  -99.444 &  115.872 & -138.205 & 102.573 \\
+-1 &  1 & -1 & 60.000 & -109.087   &  23.189 &  100.025 &   51.565 &  -49.659 &  94.724 \\
+-1 & -1 &  1 & 60.000 & -109.087   & 114.717 &  -79.140 &  -40.797 &   49.659 & -85.275 \\
+-1 & -1 & -1 & 60.000 & -109.087   & 123.214 & -100.025 &  151.590 &  -49.659 &  94.724 \\
 \bottomrule
 \end{tabular}
-\caption{The eight possible configurations for locking the first joint.}
+\caption{The eight possible configurations for locking the first joint, where S, E, and W stand for "SHOULDER", "ELBOW", and "WRIST", respectively.}
 % \label{dhparams}
 \end{table}
 
@@ -612,5 +677,10 @@ I should write this?
 \nocite{*}
 \bibliography{bib}
 \bibliographystyle{abbrv}
+
+\clearpage
+\appendix
+\section{Appendix: Code}
+\lstinputlisting[language=Python]{analysis.py}
 
 \end{document}
