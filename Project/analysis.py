@@ -39,7 +39,7 @@ configs = [[theta1, 90,  0, d1],
            [theta7, 90,  0, d7]]
 
 # Stanford Arm Example from Class
-# configs = [[theta1, -90, 0,  0],
+# configs = [[theta1, -90, 0, d1],
 #            [theta2,  90, 0, d2],
 #            [   -90,   0, 0, d3],
 #            [theta4, -90, 0,  0],
