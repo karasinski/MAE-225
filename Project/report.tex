@@ -20,6 +20,15 @@
 \usepackage{pgfplots}
 \usepackage{siunitx}
 \usepackage{wrapfig}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,
+    urlcolor=black,
+    citecolor=black,
+}
 
 % Command "alignedbox{}{}" for a box within an align environment
 % Source: http://www.latex-community.org/forum/viewtopic.php?f=46&t=8144
@@ -91,7 +100,7 @@
 
 The Space Station Remote Manipulator System (SSRMS) was designed and built to construct the International Space Station (ISS) and grapple with visiting space vehicles.
 The SSRMS is a seven degree of freedom (DoF) manipulator consisting entirely of revolute joints.
-The arm is symmetric, consisting of a 3DoF (roll, yaw, pitch) ``shoulder'', an "elbow" pitch joint, and a 3DoF (pitch, yaw, roll) ``wrist''.
+The arm is symmetric, consisting of a 3DoF (roll, yaw, pitch) ``shoulder'', an ``elbow'' pitch joint, and a 3DoF (pitch, yaw, roll) ``wrist''.
 Due to this symmetric structure, the arm has the ability to ``walk'' along the station, greatly increasing it's available working space.
 The arm can lock the wrist to a grapple fixture, then disconnect the shoulder (which becomes the new wrist) to walk along the station.
 See Figure~\ref{ssrms_image} for a picture of the arm grappling a visiting Cygnus vehicle.
@@ -100,6 +109,7 @@ The SSRMS is operating from one of the two Robotic Work Stations (RWS) located i
 While operating the arm from the RWS, astronauts commonly lock one of the shoulder joints, which allows for more predictable movement of the arm.
 The shoulder roll is the most commonly locked joint during training and operation of the arm~\cite{astro_emails}.
 For this reason, we will consider the shoulder roll joint (the first joint of the arm) to be locked at a fixed angle for the majority of this report.
+We will begin by defining the D-H parameters and the transformation matrices for each joint, solve for the inverse kinematics, and then work through two different Jacobians.
 
 \section{Finite Kinematic Analysis}
 \subsection{Denavit-Hartenberg Parameters}
@@ -143,7 +153,7 @@ $i$ & $\theta_i$ & $\alpha_i$ & $a_i$ & $d_i$ \\
 \end{tabular}
 \caption{The Denavit-Hartenberg parameters for the SSRMS.
 These parameters are the joint angle, $\theta$, the link twist angle, $\alpha$, the link length, $a$, and the joint offset, $d$.
-These $\theta_i$s give the initial or ``zero-displacement" configuration, but each $\theta_i$ is modeled as an individual variable below.}
+These $\theta_i$s give the initial or ``zero-displacement'' configuration, but each $\theta_i$ is modeled as an individual variable below.}
 \label{dhparams}
 \end{table}
 
@@ -165,29 +175,30 @@ T_{67} &=
 \left[\begin{matrix}\cos{\left (\theta_{7} \right )} & 0 & \sin{\left (\theta_{7} \right )} & 0\\\sin{\left (\theta_{7} \right )} & 0 & - \cos{\left (\theta_{7} \right )} & 0\\0 & 1 & 0 & d_{7}\\0 & 0 & 0 & 1\end{matrix}\right]
 \end{align*}
 
+\subsubsection{Direct Kinematics}
 Once these seven matrices are defined, it is often desirable to be able to translate directly from the initial coordinate frame to the final end effector frame.
 This is easily found by multiplying the successive matrices together to form $T_{07}$, see Equation~\ref{direct}.
 Multiplying these matrices together yields
 \begin{align}
 T_{07} =& T_{01} T_{12} T_{23} T_{34} T_{45} T_{56} T_{67} \label{direct} \\
-T_{07}[1, 1] =& \left(- s_{1} c_{345} + s_{345} c_{1} c_{2}\right) s_{7} + \left(s_{1} s_{345} c_{6} + s_{2} s_{6} c_{1} + c_{1} c_{2} c_{6} c_{345}\right) c_{7} \nonumber \\
-T_{07}[1, 2] =& s_{1} s_{6} s_{345} - s_{2} c_{1} c_{6} + s_{6} c_{1} c_{2} c_{345} \nonumber \\
-T_{07}[1, 3] =& \left(s_{1} c_{345} - s_{345} c_{1} c_{2}\right) c_{7} + \left(s_{1} s_{345} c_{6} + s_{2} s_{6} c_{1} + c_{1} c_{2} c_{6} c_{345}\right) s_{7} \nonumber \\
-T_{07}[1, 4] =& a_{3} s_{1} s_{3} + a_{3} c_{1} c_{2} c_{3} + a_{4} s_{1} s_{34} + a_{4} c_{1} c_{2} c_{34} + d_{2} s_{1} + d_{3} s_{2} c_{1} - d_{6} s_{1} c_{345} + d_{6} s_{345} c_{1} c_{2} \nonumber \\
-              & + d_{7} s_{1} s_{6} s_{345} - d_{7} s_{2} c_{1} c_{6} + d_{7} s_{6} c_{1} c_{2} c_{345} \nonumber \\
-T_{07}[2, 1] =& \left(s_{1} s_{345} c_{2} + c_{1} c_{345}\right) s_{7} + \left(s_{1} s_{2} s_{6} + s_{1} c_{2} c_{6} c_{345} - s_{345} c_{1} c_{6}\right) c_{7} \nonumber \\
-T_{07}[2, 2] =& - s_{1} s_{2} c_{6} + s_{1} s_{6} c_{2} c_{345} - s_{6} s_{345} c_{1} \nonumber \\
-T_{07}[2, 3] =& - \left(s_{1} s_{345} c_{2} + c_{1} c_{345}\right) c_{7} + \left(s_{1} s_{2} s_{6} + s_{1} c_{2} c_{6} c_{345} - s_{345} c_{1} c_{6}\right) s_{7} \nonumber \\
-T_{07}[2, 4] =& a_{3} s_{1} c_{2} c_{3} - a_{3} s_{3} c_{1} + a_{4} s_{1} c_{2} c_{34} - a_{4} s_{34} c_{1} - d_{2} c_{1} + d_{3} s_{1} s_{2} + d_{6} s_{1} s_{345} c_{2} + d_{6} c_{1} c_{345} \nonumber \\
-              & - d_{7} s_{1} s_{2} c_{6} + d_{7} s_{1} s_{6} c_{2} c_{345} - d_{7} s_{6} s_{345} c_{1} \nonumber \\
-T_{07}[3, 1] =& \left(s_{2} c_{6} c_{345} - s_{6} c_{2}\right) c_{7} + s_{2} s_{7} s_{345} \nonumber \\
-T_{07}[3, 2] =& s_{2} s_{6} c_{345} + c_{2} c_{6} \nonumber \\
-T_{07}[3, 3] =& \left(s_{2} c_{6} c_{345} - s_{6} c_{2}\right) s_{7} - s_{2} s_{345} c_{7} \nonumber \\
-T_{07}[3, 4] =& a_{3} s_{2} c_{3} + a_{4} s_{2} c_{34} + d_{1} - d_{3} c_{2} + d_{6} s_{2} s_{345} + d_{7} s_{2} s_{6} c_{345} + d_{7} c_{2} c_{6} \nonumber \\
-T_{07}[4, 1] =& 0 \nonumber \\
-T_{07}[4, 2] =& 0 \nonumber \\
-T_{07}[4, 3] =& 0 \nonumber \\
-T_{07}[4, 4] =& 1 \nonumber
+T_{07}[1, 1] &= u_x =   \left(- s_{1} c_{345} + s_{345} c_{1} c_{2}\right) s_{7} + \left(s_{1} s_{345} c_{6} + s_{2} s_{6} c_{1} + c_{1} c_{2} c_{6} c_{345}\right) c_{7} \nonumber \\
+T_{07}[2, 1] &= u_y =   \left(s_{1} s_{345} c_{2} + c_{1} c_{345}\right) s_{7} + \left(s_{1} s_{2} s_{6} + s_{1} c_{2} c_{6} c_{345} - s_{345} c_{1} c_{6}\right) c_{7} \nonumber \\
+T_{07}[3, 1] &= u_z =   \left(s_{2} c_{6} c_{345} - s_{6} c_{2}\right) c_{7} + s_{2} s_{7} s_{345} \nonumber \\
+T_{07}[4, 1] &=   0 = 0 \nonumber \\
+T_{07}[1, 2] &= v_x =   s_{1} s_{6} s_{345} - s_{2} c_{1} c_{6} + s_{6} c_{1} c_{2} c_{345} \nonumber \\
+T_{07}[2, 2] &= v_y =   - s_{1} s_{2} c_{6} + s_{1} s_{6} c_{2} c_{345} - s_{6} s_{345} c_{1} \nonumber \\
+T_{07}[3, 2] &= v_z =   s_{2} s_{6} c_{345} + c_{2} c_{6} \nonumber \\
+T_{07}[4, 2] &=   0 = 0 \nonumber \\
+T_{07}[2, 3] &= w_x =   - \left(s_{1} s_{345} c_{2} + c_{1} c_{345}\right) c_{7} + \left(s_{1} s_{2} s_{6} + s_{1} c_{2} c_{6} c_{345} - s_{345} c_{1} c_{6}\right) s_{7} \nonumber \\
+T_{07}[1, 3] &= w_y =   \left(s_{1} c_{345} - s_{345} c_{1} c_{2}\right) c_{7} + \left(s_{1} s_{345} c_{6} + s_{2} s_{6} c_{1} + c_{1} c_{2} c_{6} c_{345}\right) s_{7} \nonumber \\
+T_{07}[3, 3] &= w_z =   \left(s_{2} c_{6} c_{345} - s_{6} c_{2}\right) s_{7} - s_{2} s_{345} c_{7} \nonumber \\
+T_{07}[4, 3] &=   0 = 0 \nonumber \\
+T_{07}[1, 4] &= p_x =   a_{3} s_{1} s_{3} + a_{3} c_{1} c_{2} c_{3} + a_{4} s_{1} s_{34} + a_{4} c_{1} c_{2} c_{34} + d_{2} s_{1} + d_{3} s_{2} c_{1} - d_{6} s_{1} c_{345} + d_{6} s_{345} c_{1} c_{2} \nonumber \\
+              &\phantom{= a_b =}   + d_{7} s_{1} s_{6} s_{345} - d_{7} s_{2} c_{1} c_{6} + d_{7} s_{6} c_{1} c_{2} c_{345} \nonumber \\
+T_{07}[2, 4] &= p_y =   a_{3} s_{1} c_{2} c_{3} - a_{3} s_{3} c_{1} + a_{4} s_{1} c_{2} c_{34} - a_{4} s_{34} c_{1} - d_{2} c_{1} + d_{3} s_{1} s_{2} + d_{6} s_{1} s_{345} c_{2} + d_{6} c_{1} c_{345} \nonumber \\
+              &\phantom{= a_b =}   - d_{7} s_{1} s_{2} c_{6} + d_{7} s_{1} s_{6} c_{2} c_{345} - d_{7} s_{6} s_{345} c_{1} \nonumber \\
+T_{07}[3, 4] &= p_z =   a_{3} s_{2} c_{3} + a_{4} s_{2} c_{34} + d_{1} - d_{3} c_{2} + d_{6} s_{2} s_{345} + d_{7} s_{2} s_{6} c_{345} + d_{7} c_{2} c_{6} \nonumber \\
+T_{07}[4, 4] &=   1 = 1 \nonumber
 \end{align}
 
 \subsection{Joint/Shape Matrices}
@@ -456,7 +467,7 @@ T_{07} &=
 -0.5859 & 0.3495 & 0.7311 & -2.4734 \\
 -0.1154 & 0.9290 & 0.3517 & -0.4927 \\
 0 & 0 & 0 & 1
-\end{matrix}\right] \\
+\end{matrix}\right]
 \end{align*}
 and locking the first joint variable $\theta_1 = \beta = 60^\circ$, we can solve for the 8 possible configurations of the arm, see Table~\ref{ik_res}.
 The equations used to solve for these values are taken from above, and the code used to generate these results are in the Appendex.
@@ -476,28 +487,28 @@ S & E & W & $\theta_1$ & $\theta_2$ & $\theta_3$ & $\theta_4$ & $\theta_5$ & $\t
 -1 & -1 & -1 & 60.000 & -109.087   & 123.214 & -100.025 &  151.590 &  -49.659 &  94.724 \\
 \bottomrule
 \end{tabular}
-\caption{The eight possible configurations for locking the first joint, where S, E, and W stand for "SHOULDER", "ELBOW", and "WRIST", respectively.}
+\caption{The eight possible configurations for locking the first joint, where S, E, and W stand for ``SHOULDER'', ``ELBOW'', and ``WRIST'', respectively.}
 \label{ik_res}
 \end{table}
 
 \section{Differential Kinematic Analysis}
 \subsection{Method 1: Kinematic Jacobian}
-The first Jacobian is based of a Kinematic approach.
+The first Jacobian is based of a kinematic approach.
 Where $\hat{z}_i$ is taken from the last column of $T_{0i}$, and can be defined~\cite{mae225_notes}
 \begin{align*}
 T_{0i} &=
 \left[\begin{matrix}
   & \du{\Theta}_i &   & \vdots & a_i \\
   & \hdots   &   &        & \hdots \\
-0 &        0 & 0 & \vdots & 0
+0 &        0 & 0 & \vdots & 1
 \end{matrix}\right] \\
-\du{\Theta}_i &=
+{\Theta}_i &=
 \left[\begin{matrix}
 & & \\
 x_i & y_i & z_i \\
 & &
 \end{matrix}\right] \\
-\hat{z}_i &= \left( \prod_{i=0}^n \du{\Theta}_i \right) z_i
+\hat{z}_i &= \left( \prod_{i=0}^n {\Theta}_i \right) z_i
 \end{align*}
 and $\vec{r}_i$ is defined
 \begin{align*}
@@ -507,7 +518,7 @@ With these definitions, we can find the Jacobian via
 \begin{align*}
 \dot{\vec{P}} &= \sum_{i=0}^{n} \left( \hat{z}_i \times \vec{r}_i \right) \dot{\theta}_i \\
 \vec{w} &= \sum_{i=0}^{n} \dot{\theta}_i \hat{z}_i \\
-\du{J}_K \dot{q} &=
+{J}_K \dot{q} &=
 \left[\begin{matrix}
 \underline{\dot{P}} \\
 \underline{\vec{w}}
@@ -591,7 +602,7 @@ We first form our $^i D$ matrices from
 \begin{align*}
 ^i D = T_{i-1} Q_i T_{i-1}^{-1}
 \end{align*}
-And $T_{0}= \du{I}, T_{i} = \prod_0^n A_n,$ where $A_n$ are the matrices formed by the D-H parameters.
+And $T_{0}= {I}, T_{i} = \prod_0^n A_n,$ where $A_n$ are the matrices formed by the D-H parameters.
 Where, as all our joints are revolute, the derivative operator matrix is
 \begin{align*}
 Q &=
@@ -687,44 +698,31 @@ J_{57} &= - s_{1} s_{2} c_{6} + s_{1} s_{6} c_{2} c_{345} - s_{6} s_{345} c_{1} 
 J_{67} &= s_{2} s_{6} c_{345} + c_{2} c_{6} \\
 \end{align*}
 
-\subsection{Velocity Equation}
-Using the Jacobian derived using the geometric method, we can find the velocity equation
-\begin{align*}
-\dot{x} &= J_G \dot{q} \\
-\left[\begin{matrix}
-\mu_x \\
-\mu_y \\
-\mu_z \\
-\omega_x \\
-\omega_y \\
-\omega_z \\
-\end{matrix}\right]
-&= J_G
-\left[\begin{matrix}
-\dot{\theta}_1 \\
-\dot{\theta}_2 \\
-\dot{\theta}_3 \\
-\dot{\theta}_4 \\
-\dot{\theta}_5 \\
-\dot{\theta}_6 \\
-\dot{\theta}_7 \\
-\end{matrix}\right] \\
-&=
-\left[\begin{matrix}
-\dot{\theta}_{2} J_{12} + \dot{\theta}_{3} J_{13} + \dot{\theta}_{4} J_{14} + \dot{\theta}_{5} J_{15} + \dot{\theta}_{6} J_{16} + \dot{\theta}_{7} J_{17}\\
-\dot{\theta}_{2} J_{22} + \dot{\theta}_{3} J_{23} + \dot{\theta}_{4} J_{24} + \dot{\theta}_{5} J_{25} + \dot{\theta}_{6} J_{26} + \dot{\theta}_{7} J_{27}\\
-\dot{\theta}_{3} J_{33} + \dot{\theta}_{4} J_{34} + \dot{\theta}_{5} J_{35} + \dot{\theta}_{6} J_{36} + \dot{\theta}_{7} J_{37}\\
-\dot{\theta}_{2} J_{42} + \dot{\theta}_{3} J_{43} + \dot{\theta}_{4} J_{44} + \dot{\theta}_{5} J_{45} + \dot{\theta}_{6} J_{46} + \dot{\theta}_{7} J_{47}\\
-\dot{\theta}_{2} J_{52} + \dot{\theta}_{3} J_{53} + \dot{\theta}_{4} J_{54} + \dot{\theta}_{5} J_{55} + \dot{\theta}_{6} J_{56} + \dot{\theta}_{7} J_{57}\\
-\dot{\theta}_{1} + \dot{\theta}_{3} J_{63} + \dot{\theta}_{4} J_{64} + \dot{\theta}_{5} J_{65} + \dot{\theta}_{6} J_{66} + \dot{\theta}_{7} J_{67}
-\end{matrix}\right]
-\end{align*}
-
+\clearpage
 \section{Conclusions}
+In this report we have completed a kinematic analysis of the Space Station Robotic Manipulator with a locked shoulder roll joint.
+Transformation matrices were found using both Denavit-Hartenberg parameters and shape matrices.
+The direct kinematic solution was identified using the seven transformation matrices.
+The inverse kinematic solution found by Xu et al. was verified and several inaccuracies were fixed~\cite{xu2014analytical}.
+Using the resulting inverse kinematic solution along with three configuration indicators, a Python program was written to generate eight solutions for an example pose, matching the solution found by Xu et al.
+
+A differential kinematic analysis was conducted, resulting in two Jacobians.
+The kinematic Jacobian, $J_K$, was generated using $\hat{z}$ and $\vec{r}$ derived from the Denavit-Hartenberg matrices.
+A geometric Jacobian, $J_G$, was calculated using a different approach involving derivative matrices.
+A symbolic Python program was written to calculate and compare the numerical efficiency of these two Jacobians.
+$J_K$ required a total of 4833 operations per calculation, or
+\begin{verbatim}
+269*ADD + 1210*COS + 1754*MUL + 100*NEG + 1106*SIN + 394*SUB
+\end{verbatim}
+while $J_G$ required a total of 1138 operations per calculation, or
+\begin{verbatim}
+207*ADD + 225*COS + 351*MUL + 33*NEG + 4*POW + 207*SIN + 111*SUB
+\end{verbatim}
+Based off this simple analysis, it appears that the geometric Jacobian technique produced a more efficient Jacobian in this case.
 
 % \nocite{*}
 \bibliography{bib}
-\bibliographystyle{abbrv}
+\bibliographystyle{plain}
 
 \clearpage
 \appendix
